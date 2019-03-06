@@ -1,13 +1,28 @@
 package com.ge.music;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+import com.ge.music.base.BaseActivity;
+import com.ge.music.media.MVActivity;
+
+
+public class MainActivity extends BaseActivity {
+
+    private Button button;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        button = findViewById(R.id.button);
+        button.setOnClickListener((v) -> {
+            Intent intent = new Intent(this, MVActivity.class);
+            startActivity(intent);
+        });
     }
+
+
 }
