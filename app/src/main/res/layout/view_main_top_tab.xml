@@ -10,46 +10,55 @@
         android:src="@mipmap/logo"
         android:id="@+id/main_tab_bar_left"/>
 
-    <LinearLayout
+    <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
         android:layout_toRightOf="@+id/main_tab_bar_left"
         android:layout_toLeftOf="@+id/main_tab_bar_right"
+        android:orientation="horizontal"
         android:gravity="center"
+        android:id="@+id/tab_group"
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
 
-        <TextView
+        <RadioButton
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:button="@null"
             android:textColor="@color/white"
-            android:background="@color/smssdk_black"
+            android:id="@+id/main_tab_bar_first_tab"
             android:text="我的"/>
 
-        <TextView
+        <RadioButton
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:button="@null"
             android:textColor="@color/white"
+            android:id="@+id/main_tab_bar_second_tab"
             android:text="发现"/>
 
-        <TextView
+        <RadioButton
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:button="@null"
             android:textColor="@color/white"
+            android:id="@+id/main_tab_bar_third_tab"
             android:text="朋友"/>
 
-        <TextView
+        <RadioButton
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:button="@null"
             android:textColor="@color/white"
+            android:id="@+id/main_tab_bar_fourth_tab"
             android:text="视频"/>
 
-    </LinearLayout>
+    </RadioGroup>
 
     <ImageView
         android:layout_width="50dp"

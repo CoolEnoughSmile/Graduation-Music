@@ -14,21 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <!--<activity
-            android:name=".SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>-->
 
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:name=".SplashActivity"
+            android:theme="@style/TranslucentTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,14 +26,27 @@
             </intent-filter>
         </activity>
 
-        <!--<activity android:name=".MainActivity" />-->
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/TranslucentTheme"
+            android:label="主页"/>
 
         <activity
             android:name=".media.MVActivity"
+            android:theme="@style/TranslucentTheme"
+            android:label="视频播放"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".RegisterActivity" android:label="用户注册"/>
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/TranslucentTheme"
+            android:label="用户注册"/>
+
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/TranslucentTheme"
+            android:label="用户登录"/>
     </application>
 
 </manifest>
