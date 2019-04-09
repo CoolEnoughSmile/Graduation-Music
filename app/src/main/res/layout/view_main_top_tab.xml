@@ -1,71 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="50dp">
 
     <ImageView
+        android:id="@+id/main_tab_bar_left"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark"
-        android:src="@mipmap/logo"
-        android:id="@+id/main_tab_bar_left"/>
+        android:src="@mipmap/logo" />
 
-    <RadioGroup
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
-        android:layout_toRightOf="@+id/main_tab_bar_left"
         android:layout_toLeftOf="@+id/main_tab_bar_right"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:id="@+id/tab_group"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:layout_toRightOf="@id/main_tab_bar_left"
+        app:tabMode="fixed"
+        app:tabGravity="center"
+        app:tabIndicator="@null">
 
-        <RadioButton
-            android:layout_width="50dp"
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:button="@null"
-            android:textColor="@color/white"
-            android:id="@+id/main_tab_bar_first_tab"
-            android:text="我的"/>
+            android:text="我的" />
 
-        <RadioButton
-            android:layout_width="50dp"
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:button="@null"
-            android:textColor="@color/white"
-            android:id="@+id/main_tab_bar_second_tab"
-            android:text="发现"/>
+            android:text="发现" />
 
-        <RadioButton
-            android:layout_width="50dp"
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:button="@null"
-            android:textColor="@color/white"
-            android:id="@+id/main_tab_bar_third_tab"
-            android:text="朋友"/>
+            android:text="朋友" />
 
-        <RadioButton
-            android:layout_width="50dp"
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:button="@null"
-            android:textColor="@color/white"
-            android:id="@+id/main_tab_bar_fourth_tab"
-            android:text="视频"/>
+            android:text="视频" />
 
-    </RadioGroup>
+    </android.support.design.widget.TabLayout>
 
     <ImageView
+        android:id="@+id/main_tab_bar_right"
         android:layout_width="50dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark"
-        android:src="@mipmap/logo"
         android:layout_alignParentRight="true"
-        android:id="@+id/main_tab_bar_right"/>
+        android:background="@color/colorPrimaryDark"
+        android:src="@mipmap/logo" />
 
 </RelativeLayout>

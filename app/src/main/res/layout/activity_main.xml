@@ -4,13 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/drawerLayout"
     tools:context=".MainActivity">
 
-    <com.ge.music.CESView.MainTopTabView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/top_tab_bar"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/main_content">
 
+        <include layout="@layout/view_main_top_tab" />
+
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPager"/>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_gravity="start"/>
 
 
 
