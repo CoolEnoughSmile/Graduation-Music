@@ -1,9 +1,10 @@
-package com.ge.music;
+package com.ge.music.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
 
 
@@ -15,7 +16,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.avtivity_splash);
 
         handler = new Handler();
         handler.postDelayed(() ->{
@@ -24,5 +24,18 @@ public class SplashActivity extends BaseActivity {
         },2000);
     }
 
+    @Override
+    protected void initView() {
 
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.avtivity_splash;
+    }
+
+    @Override
+    protected boolean isWhilteStatusBar() {
+        return false;
+    }
 }

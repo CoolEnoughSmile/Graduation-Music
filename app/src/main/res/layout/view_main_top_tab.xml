@@ -2,14 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="50dp"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/main_tab_bar_left"
-        android:layout_width="50dp"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark"
-        android:src="@mipmap/logo" />
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@mipmap/ic_dir"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"/>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
@@ -18,10 +20,11 @@
         android:layout_toLeftOf="@+id/main_tab_bar_right"
         android:layout_toRightOf="@id/main_tab_bar_left"
         app:tabMode="fixed"
+        app:tabTextAppearance="@style/TabLayoutTextNormal"
         app:tabGravity="center"
         app:tabIndicator="@null">
 
-        <android.support.design.widget.TabItem
+        <!--<android.support.design.widget.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="我的" />
@@ -39,16 +42,17 @@
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="视频" />
+            android:text="视频" />-->
 
     </android.support.design.widget.TabLayout>
 
     <ImageView
         android:id="@+id/main_tab_bar_right"
-        android:layout_width="50dp"
-        android:layout_height="match_parent"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_alignParentRight="true"
-        android:background="@color/colorPrimaryDark"
-        android:src="@mipmap/logo" />
+        android:layout_centerVertical="true"
+        android:src="@mipmap/ic_search"
+        android:layout_marginRight="10dp"/>
 
 </RelativeLayout>

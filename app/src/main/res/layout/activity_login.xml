@@ -30,6 +30,7 @@
         app:layout_constraintTop_toTopOf="@id/horizontal_Guideline_20"
         android:layout_marginTop="25dp"
         android:text="酷音乐，转世界"
+        android:textStyle="bold"
         android:textSize="16sp"/>
 
     <android.support.constraint.Guideline
@@ -44,6 +45,8 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:text="密码登录"
+        android:textColor="@color/gray"
+        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/vertical_Guideline_30"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="15dp"
@@ -93,6 +96,8 @@
         android:id="@+id/forget_password"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textColor="@color/gray"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_layout"/>
 
@@ -106,9 +111,9 @@
         android:textColor="@color/colorPrimaryDark"
         android:id="@+id/login_without_password"/>
 
-    <TextView
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:text="登录"
         android:textColor="@color/white"
         android:gravity="center"
@@ -118,6 +123,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:id="@+id/login_btn"/>
 
     <TextView
@@ -129,6 +135,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:textSize="16sp"
         android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textColor="@color/gray"
         android:text="注册"/>
 
     <android.support.constraint.Guideline

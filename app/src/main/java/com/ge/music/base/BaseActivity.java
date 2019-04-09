@@ -12,24 +12,30 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
+        setContentView(getLayout());
+        setDarkStatusIcon(isWhilteStatusBar());
+        initView();
     }
 
     public void setDarkStatusIcon(boolean bDark) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decorView = getWindow().getDecorView();
-            getWindow().setStatusBarColor(Color.WHITE);//这里对应的是状态栏的颜色，就是style中colorPrimaryDark的颜色
-            if (decorView != null) {
-                int vis = decorView.getSystemUiVisibility();
-                if (bDark) {
+        if (bDark) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View decorView = getWindow().getDecorView();
+                getWindow().setStatusBarColor(Color.WHITE);//这里对应的是状态栏的颜色，就是style中colorPrimaryDark的颜色
+                if (decorView != null) {
+                    int vis = decorView.getSystemUiVisibility();
                     vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                } else {
-                    vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    decorView.setSystemUiVisibility(vis);
                 }
-                decorView.setSystemUiVisibility(vis);
             }
         }
+    }
+
+    protected abstract void initView();
+
+    protected abstract int getLayout();
+
+    protected boolean isWhilteStatusBar(){
+        return false;
     }
 }

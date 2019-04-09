@@ -16,8 +16,8 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".SplashActivity"
-            android:theme="@style/TranslucentTheme"
+            android:name=".activity.SplashActivity"
+            android:theme="@style/SplashActivityTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +27,9 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/TranslucentTheme"
+            android:screenOrientation="portrait"
             android:label="主页"/>
 
         <activity
@@ -39,13 +40,15 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.RegisterActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme"
             android:label="用户注册"/>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:theme="@style/TranslucentTheme"
+            android:screenOrientation="portrait"
             android:label="用户登录"/>
     </application>
 

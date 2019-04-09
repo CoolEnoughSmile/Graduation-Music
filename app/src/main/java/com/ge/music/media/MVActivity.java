@@ -28,16 +28,9 @@ public class MVActivity extends BaseActivity {
     private JzvdStd jzvdStd;
     private RecyclerView recyclerView;
 
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.mv_activity);
-
-        initView();
-
-    }
-
-    private void initView() {
+    protected void initView() {
         jzvdStd = findViewById(R.id.videoplayer);
         recyclerView = findViewById(R.id.recyclerview);
 
@@ -46,6 +39,11 @@ public class MVActivity extends BaseActivity {
                 , "左手右手一起撸", Jzvd.SCREEN_WINDOW_NORMAL);
         loadVideoScreenshot(this,"http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4",jzvdStd.thumbImageView,1);
 
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.mv_activity;
     }
 
     public static void loadVideoScreenshot(final Context context, String uri, ImageView imageView, long frameTimeMicros) {

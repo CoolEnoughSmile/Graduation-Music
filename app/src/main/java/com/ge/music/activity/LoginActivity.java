@@ -1,27 +1,24 @@
-package com.ge.music;
+package com.ge.music.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView loginBtn;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        setDarkStatusIcon(true);
-        initView();
+    protected void initView() {
+        findViewById(R.id.login_btn).setOnClickListener(this);
     }
 
-    private void initView() {
-        findViewById(R.id.login_btn).setOnClickListener(this);
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_login;
     }
 
 
@@ -32,5 +29,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
                 break;
         }
+    }
+
+    @Override
+    protected boolean isWhilteStatusBar() {
+        return true;
     }
 }
