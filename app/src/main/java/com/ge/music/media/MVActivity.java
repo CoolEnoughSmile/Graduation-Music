@@ -3,9 +3,7 @@ package com.ge.music.media;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
@@ -43,7 +41,7 @@ public class MVActivity extends BaseActivity {
 
     @Override
     protected int getLayout() {
-        return R.layout.mv_activity;
+        return R.layout.activity_mv;
     }
 
     public static void loadVideoScreenshot(final Context context, String uri, ImageView imageView, long frameTimeMicros) {

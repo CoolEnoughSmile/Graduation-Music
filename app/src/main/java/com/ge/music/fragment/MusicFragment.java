@@ -1,10 +1,11 @@
 package com.ge.music.fragment;
 
 
+
 import com.ge.music.R;
 import com.ge.music.base.BaseFragment;
 
-public class MeFragment extends BaseFragment {
+public class MusicFragment extends BaseFragment {
 
 
     @Override
@@ -14,11 +15,13 @@ public class MeFragment extends BaseFragment {
 
     @Override
     protected int getLayout() {
-        return R.layout.fragment_me;
+        return R.layout.fragment_music;
     }
 
     @Override
     public String getName() {
-        return "我的";
+        return "音乐";
     }
+
+
 }
