@@ -11,6 +11,7 @@ public class GraduationEraMusic extends Application {
     public void onCreate() {
         super.onCreate();
 
+        MobSDK.init(this);
         ToastUtils.init(this);
     }
 }

@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     }
 
     @Override
-    protected boolean isWhilteStatusBar() {
+    protected boolean isWhiteStatusBar() {
         return true;
     }
 

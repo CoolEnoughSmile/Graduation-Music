@@ -13,7 +13,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(getLayout());
-        setDarkStatusIcon(isWhilteStatusBar());
+        setDarkStatusIcon(isWhiteStatusBar());
         initView();
     }
 
@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract int getLayout();
 
-    protected boolean isWhilteStatusBar(){
+    protected boolean isWhiteStatusBar(){
         return false;
     }
 }

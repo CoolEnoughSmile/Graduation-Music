@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        tools:replace="android:name"
         android:name=".base.GraduationEraMusic"
         android:allowBackup="true"
         android:icon="@mipmap/logo"

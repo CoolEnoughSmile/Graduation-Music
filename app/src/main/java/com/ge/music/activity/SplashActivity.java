@@ -35,7 +35,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     @Override
-    protected boolean isWhilteStatusBar() {
+    protected boolean isWhiteStatusBar() {
         return false;
     }
 }
