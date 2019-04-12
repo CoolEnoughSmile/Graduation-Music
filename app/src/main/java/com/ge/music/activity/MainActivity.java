@@ -13,9 +13,9 @@ import com.ge.music.R;
 import com.ge.music.adapter.TabLayoutPageAdapter;
 import com.ge.music.base.BaseActivity;
 import com.ge.music.base.BaseFragment;
-import com.ge.music.fragment.DiscoveryFragment;
 import com.ge.music.fragment.FriendFragment;
-import com.ge.music.fragment.MeFragment;
+import com.ge.music.fragment.MessageFragment;
+import com.ge.music.fragment.MusicFragment;
 import com.ge.music.fragment.VideoFragment;
 
 
@@ -51,10 +51,10 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     private BaseFragment[] prepareFragments() {
         BaseFragment[] fragments = new BaseFragment[4];
-        fragments[0] = new MeFragment();
-        fragments[1] = new DiscoveryFragment();
+        fragments[0] = new VideoFragment();
+        fragments[1] = new MusicFragment();
         fragments[2] = new FriendFragment();
-        fragments[3] = new VideoFragment();
+        fragments[3] = new MessageFragment();
         return fragments;
     }
 
