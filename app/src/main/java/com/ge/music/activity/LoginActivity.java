@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.media.MVActivity;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -27,6 +28,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         switch (v.getId()){
             case R.id.login_btn:
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                break;
+            case R.id.forget_password:
+                startActivity(new Intent(LoginActivity.this, MVActivity.class));
                 break;
         }
     }
