@@ -51,6 +51,18 @@
             android:theme="@style/TranslucentTheme"
             android:screenOrientation="portrait"
             android:label="用户登录"/>
+
+        <activity
+            android:name=".activity.LoginWithVCodeActivity"
+            android:theme="@style/TranslucentTheme"
+            android:screenOrientation="portrait"
+            android:label="免密码登录"/>
+
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:theme="@style/TranslucentTheme"
+            android:screenOrientation="portrait"
+            android:label="重置密码"/>
     </application>
 
 </manifest>

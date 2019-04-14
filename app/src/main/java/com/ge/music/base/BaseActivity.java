@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.ge.music.R;
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
@@ -27,6 +29,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                     vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
                     decorView.setSystemUiVisibility(vis);
                 }
+            }
+        }else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
             }
         }
     }

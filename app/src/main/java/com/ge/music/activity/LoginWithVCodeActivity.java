@@ -1,37 +1,31 @@
 package com.ge.music.activity;
 
-
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
 
-public class RegisterActivity extends BaseActivity implements View.OnClickListener {
+public class LoginWithVCodeActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText phoneEdt;
-    private EditText passwordEdt;
-    private EditText passwordAgainEdt;
-    private Button sendBtn;
-    private Button registerBtn;
+    private EditText vCodeEdt;
 
     @Override
     protected void initView() {
-        ((TextView)findViewById(R.id.title_tv)).setText("用户注册");
+        ((TextView)findViewById(R.id.title_tv)).setText("验证码登录");
         findViewById(R.id.back_btn).setOnClickListener(this);
         findViewById(R.id.send_btn).setOnClickListener(this);
-        findViewById(R.id.register_btn).setOnClickListener(this);
+        findViewById(R.id.login_btn).setOnClickListener(this);
 
         phoneEdt = findViewById(R.id.phone_edt);
-        passwordEdt = findViewById(R.id.password_edt);
-        passwordAgainEdt = findViewById(R.id.password_again_edt);
+        vCodeEdt = findViewById(R.id.vcode_edt);
     }
 
     @Override
     protected int getLayout() {
-        return R.layout.activity_register;
+        return R.layout.activity_login_with_vcode;
     }
 
     @Override
@@ -42,7 +36,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.send_btn:
                 break;
-            case R.id.register_btn:
+            case R.id.login_btn:
                 break;
         }
     }
