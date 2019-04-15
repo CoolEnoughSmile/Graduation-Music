@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.media.Mp3Activity;
 import com.ge.music.utils.ToastUtils;
 import com.mob.ums.OperationCallback;
 import com.mob.ums.SocialNetwork;
@@ -42,7 +43,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.login_btn:
-                loginWithPhoneNumber();
+                startActivity(new Intent(LoginActivity.this,Mp3Activity.class));
+//                loginWithPhoneNumber();
                 break;
             case R.id.qq_btn:
                 loginWithQQ();

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:id="@+id/drawerLayout"
     tools:context=".activity.MainActivity">
@@ -21,14 +22,67 @@
             android:layout_weight="1"
             android:id="@+id/viewPager"/>
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:background="@color/colorPrimaryDark">
+            android:layout_gravity="bottom">
 
-        </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.shehuan.niv.NiceImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:is_circle="true"
+                android:src="@color/colorPrimaryDark"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/poster_iv"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="All I Have Is Love"
+                android:id="@+id/music_name_tv"
+                android:layout_marginLeft="10dp"
+                app:layout_constraintLeft_toRightOf="@+id/poster_iv"
+                app:layout_constraintTop_toTopOf="@+id/poster_iv"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="What I got for you is all you need"
+                app:layout_constraintLeft_toLeftOf="@+id/music_name_tv"
+                app:layout_constraintTop_toBottomOf="@+id/music_name_tv"
+                />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@color/colorPrimaryDark"
+                android:id="@+id/music_menu_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="10dp"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@color/colorPrimaryDark"
+                app:layout_constraintTop_toTopOf="@+id/music_menu_btn"
+                app:layout_constraintRight_toLeftOf="@+id/music_menu_btn"
+                android:layout_marginRight="15dp"/>
+
+        </android.support.constraint.ConstraintLayout>
 
 
     </LinearLayout>

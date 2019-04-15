@@ -18,6 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/phone_edt"
+            android:inputType="number"
+            android:maxLength="11"
             android:hint="手机号"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -38,6 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/vcode_edt"
+                android:inputType="number"
+                android:maxLength="6"
                 android:hint="验证码"/>
         </android.support.design.widget.TextInputLayout>
 

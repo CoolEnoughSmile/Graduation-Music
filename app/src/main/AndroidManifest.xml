@@ -63,6 +63,13 @@
             android:theme="@style/TranslucentTheme"
             android:screenOrientation="portrait"
             android:label="重置密码"/>
+
+        <activity
+            android:name=".media.Mp3Activity"
+            android:theme="@style/TranslucentTheme"
+            android:screenOrientation="portrait"
+            android:label="音乐播放器测试"/>
+
     </application>
 
 </manifest>
