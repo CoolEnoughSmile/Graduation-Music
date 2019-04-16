@@ -10,8 +10,6 @@ MobSDK {
         gui false
     }
 
-    UMSSDK {}
-
     ShareSDK {
         gui false
         devInfo {

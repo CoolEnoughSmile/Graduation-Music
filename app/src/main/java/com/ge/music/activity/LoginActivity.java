@@ -2,19 +2,12 @@ package com.ge.music.activity;
 
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
-import com.ge.music.media.Mp3Activity;
-import com.ge.music.utils.ToastUtils;
-import com.mob.ums.OperationCallback;
-import com.mob.ums.SocialNetwork;
-import com.mob.ums.UMSSDK;
-import com.mob.ums.User;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -43,7 +36,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.login_btn:
-                startActivity(new Intent(LoginActivity.this,Mp3Activity.class));
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));
 //                loginWithPhoneNumber();
                 break;
             case R.id.qq_btn:
@@ -71,15 +64,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this,"请输入正确的手机号和密码",Toast.LENGTH_SHORT).show();
             return;
         }
-        UMSSDK.loginWithPhoneNumber("86",phone,passWord,loginCallback);
+//        UMSSDK.loginWithPhoneNumber("86",phone,passWord,loginCallback);
     }
 
     private void loginWithWeibo() {
-        UMSSDK.loginWithSocialAccount(SocialNetwork.SINA_WEIBO,loginCallback);
     }
 
     private void loginWithQQ() {
-        UMSSDK.loginWithSocialAccount(SocialNetwork.QQ,loginCallback);
     }
 
     @Override
@@ -87,18 +78,4 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         return true;
     }
 
-    private OperationCallback<User> loginCallback= new OperationCallback<User>(){
-        public void onSuccess(User user) {
-            ToastUtils.showToast(LoginActivity.this,"登录成功");
-            startActivity(new Intent(LoginActivity.this,MainActivity.class));
-        }
-
-        public void onCancel() {
-            Log.i("login","登录取消");
-        }
-
-        public void onFailed(Throwable t) {
-            Log.e("login",t.getMessage());
-        }
-    };
 }
