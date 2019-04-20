@@ -3,10 +3,10 @@ package com.ge.music.fragment;
 
 import android.view.View;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.CESView.CountDownTimerButton;
 import com.ge.music.R;
 import com.ge.music.base.BaseFragment;
-import com.ge.music.utils.ToastUtils;
 
 public class VideoFragment extends BaseFragment {
 
@@ -16,7 +16,7 @@ public class VideoFragment extends BaseFragment {
     protected void initView(View view) {
         countDownTimerButton = view.findViewById(R.id.countDownTimerButton);
         countDownTimerButton.setOnClickListener(v -> {
-            ToastUtils.showToast(getContext(),"倒计时开始");
+            ToastUtils.showShort("倒计时开始");
         });
     }
 

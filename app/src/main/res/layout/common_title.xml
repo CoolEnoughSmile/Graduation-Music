@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:gravity="center"
+        android:text="这是标题"
         android:layout_centerInParent="true"
         android:textColor="@color/white"
         android:textStyle="bold"

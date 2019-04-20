@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import com.ge.music.base.BaseFragment;
 
@@ -31,7 +30,6 @@ public class TabLayoutPageAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        Log.d("PageTitle:",fragments[position].getName());
         return fragments[position].getName();
     }
 

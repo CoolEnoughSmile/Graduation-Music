@@ -75,4 +75,5 @@ public class CountDownTimerButton extends Button implements View.OnClickListener
         super.onDetachedFromWindow();
         countDownTimer.cancel();
     }
+
 }

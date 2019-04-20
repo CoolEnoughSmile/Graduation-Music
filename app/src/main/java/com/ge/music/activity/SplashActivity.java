@@ -9,13 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
-import com.ge.music.utils.ToastUtils;
-
-import java.util.Arrays;
 
 
 public class SplashActivity extends BaseActivity {
@@ -60,9 +57,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("permissions","requestCode = " + requestCode);
-        Log.d("permissions","permissions = " + Arrays.toString(permissions));
-        Log.d("permissions","grantResults = " + Arrays.toString(grantResults));
+        LogUtils.d(requestCode,permissions,grantResults);
         if (grantResults.length < 0){
             gotoMainActivity();
         }else {

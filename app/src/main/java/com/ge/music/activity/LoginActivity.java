@@ -47,6 +47,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.login_without_password_btn:
                 startActivity(new Intent(LoginActivity.this,LoginWithVCodeActivity.class));
+                finish();
                 break;
             case R.id.forget_password_btn:
                 startActivity(new Intent(LoginActivity.this,ResetPasswordActivity.class));
