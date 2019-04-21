@@ -16,14 +16,13 @@ MobSDK {
             SinaWeibo {
                 appKey "853040908"
                 appSecret "7fcdd6b611e90488306eaa50a264c441"
+                callbackUri "https://api.weibo.com/oauth2/default.html"
             }
             QQ {
                 appId "1108724125"
                 appKey "rLRdhbbAuGEzZNxm"
             }
         }
-
-
     }
 }
 android {
@@ -36,11 +35,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+
+    signingConfigs {
+        release {
+            storeFile file { "D:\\study\\software\\AndroidProjects\\Graduation-Music\\ge-music.jks" }//存放签名key的本地路径
+            //签名密码
+            storePassword "gemusic2019"
+            //别名
+            keyAlias "ge-music"
+            //别名密码
+            keyPassword "gemusic2019"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.release
         }
+        debug {
+            signingConfig signingConfigs.release
+        }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

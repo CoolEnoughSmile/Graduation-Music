@@ -123,4 +123,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        countDownTimerUtils.release();
+        countDownTimerUtils = null;
+        SMSSDK.unregisterEventHandler(smsEventHandler);
+    }
 }

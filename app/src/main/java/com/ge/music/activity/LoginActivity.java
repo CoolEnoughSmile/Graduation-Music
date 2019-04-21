@@ -6,8 +6,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+
+import java.util.HashMap;
+
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.PlatformDb;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -34,9 +44,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.login_btn:
-                startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
 //                loginWithPhoneNumber();
                 break;
             case R.id.qq_btn:
@@ -46,14 +56,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 loginWithWeibo();
                 break;
             case R.id.login_without_password_btn:
-                startActivity(new Intent(LoginActivity.this,LoginWithVCodeActivity.class));
+                startActivity(new Intent(LoginActivity.this, LoginWithVCodeActivity.class));
                 finish();
                 break;
             case R.id.forget_password_btn:
-                startActivity(new Intent(LoginActivity.this,ResetPasswordActivity.class));
+                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
                 break;
             case R.id.register_btn:
-                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 break;
         }
     }
@@ -61,18 +71,62 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void loginWithPhoneNumber() {
         String phone = phoneEdt.getText().toString().trim();
         String passWord = passwordEdt.getText().toString().trim();
-        if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(passWord)){
-            Toast.makeText(this,"请输入正确的手机号和密码",Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(passWord)) {
+            Toast.makeText(this, "请输入正确的手机号和密码", Toast.LENGTH_SHORT).show();
             return;
         }
+        //todo 密码登录
 //        UMSSDK.loginWithPhoneNumber("86",phone,passWord,loginCallback);
     }
 
     private void loginWithWeibo() {
+        Platform weibo = ShareSDK.getPlatform(SinaWeibo.NAME);
+        if (weibo.isAuthValid()) {
+            weibo.removeAccount(true);
+        }
+        weibo.setPlatformActionListener(platformActionListener);
+        weibo.showUser(null);
     }
 
     private void loginWithQQ() {
+        Platform qq = ShareSDK.getPlatform(QQ.NAME);
+        if (qq.isAuthValid()) {
+            qq.removeAccount(true);
+        }
+        qq.setPlatformActionListener(platformActionListener);
+        qq.showUser(null);
     }
+
+    private PlatformActionListener platformActionListener = new PlatformActionListener() {
+        @Override
+        public void onComplete(Platform platform, int action, HashMap<String, Object> hashMap) {
+            if (action == Platform.ACTION_USER_INFOR) {
+                PlatformDb platDB = platform.getDb();//获取数平台数据DB
+                //通过DB获取各种数据
+                String token = platDB.getToken();
+                String gender = platDB.getUserGender();
+                String userIcon = platDB.getUserIcon();
+                String userId = platDB.getUserId();
+                String userName = platDB.getUserName();
+
+                LogUtils.i("token = " + token,
+                        "gender = " + gender,
+                        "userIcon = " + userIcon,
+                        "userId = " + userId,
+                        "userName = " + userName);
+            }
+        }
+
+        @Override
+        public void onError(Platform platform, int i, Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        @Override
+        public void onCancel(Platform platform, int i) {
+
+        }
+    };
 
     @Override
     protected boolean isWhiteStatusBar() {

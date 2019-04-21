@@ -34,6 +34,7 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
 
         smsEventHandler = new SMSEventHandler(smsEventListener);
         countDownTimerUtils = new CountDownTimerUtils(sendBtn, 60000, 1000);
+        SMSSDK.registerEventHandler(smsEventHandler);
     }
 
     @Override
@@ -95,6 +96,7 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
             ToastUtils.showShort("密码不能为空");
             return;
         }
+        countDownTimerUtils.start();
         SMSSDK.getVerificationCode(SMSEventHandler.COUNTRY, phone);
     }
 
@@ -117,4 +119,12 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        countDownTimerUtils.release();
+        countDownTimerUtils = null;
+        SMSSDK.unregisterEventHandler(smsEventHandler);
+    }
 }
