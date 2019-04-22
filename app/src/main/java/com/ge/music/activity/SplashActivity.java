@@ -1,16 +1,11 @@
 package com.ge.music.activity;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
 
@@ -24,20 +19,17 @@ public class SplashActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},0);
-            return;
-        }
-
         gotoMainActivity();
     }
 
+
+
     private void gotoMainActivity() {
         handler = new Handler();
-        handler.postDelayed(() ->{
-            startActivity(new Intent(this,LoginActivity.class));
+        handler.postDelayed(() -> {
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
-        },2000);
+        }, 2000);
     }
 
     @Override
@@ -55,13 +47,5 @@ public class SplashActivity extends BaseActivity {
         return false;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        LogUtils.d(requestCode,permissions,grantResults);
-        if (grantResults.length < 0){
-            gotoMainActivity();
-        }else {
-            finish();
-        }
-    }
+
 }
