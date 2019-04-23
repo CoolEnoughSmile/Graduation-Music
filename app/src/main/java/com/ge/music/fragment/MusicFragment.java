@@ -4,6 +4,7 @@ package com.ge.music.fragment;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,7 +12,9 @@ import com.ge.music.R;
 import com.ge.music.adapter.MusicAdapter;
 import com.ge.music.base.BaseFragment;
 import com.ge.music.model.MusicModel;
+import com.ge.music.utils.BannerImageLoader;
 import com.youth.banner.Banner;
+import com.youth.banner.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,20 +43,27 @@ public class MusicFragment extends BaseFragment {
                     "");
             musicModelList.add(musicModel);
         }
-        musicAdapter = new MusicAdapter(getContext(),musicModelList);
+        musicAdapter = new MusicAdapter(musicModelList);
+        musicAdapter.addHeaderView(banner);
+        musicAdapter.setHeaderViewAsFlow(true);
         recyclerView.setAdapter(musicAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.addView(banner);
+        musicAdapter.bindToRecyclerView(recyclerView);
     }
 
     private void initBanner() {
-        banner = new Banner(getContext());
+        //设置图片集合
+        List list=new ArrayList();
+        list.add("http://p1.music.126.net/Ks58J-AJ8sx7oJh1KRThIQ==/109951164018985269.jpg");
+        list.add("http://p1.music.126.net/AnCyFQlk8M6lqMHu381afg==/109951164019008126.jpg");
+        list.add("http://p1.music.126.net/4Z0Vd27keWfLz8lcx731NA==/109951164017932547.jpg");
 
-//        int width = ViewGroup.LayoutParams.MATCH_PARENT;
-//        int height =(int) (getContext().getResources().getDisplayMetrics().density * 100);
-//        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(width,height);
-//        banner.setLayoutParams(lp);
+        banner = (Banner) LayoutInflater.from(getContext()).inflate(R.layout.music_banner,(ViewGroup) getView(),false);
+        banner.setImageLoader(new BannerImageLoader())
+                .setImages(list)
+                .setBannerAnimation(Transformer.Stack)
+                .start();
     }
 
     @Override
@@ -67,4 +77,17 @@ public class MusicFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //开始轮播
+        banner.startAutoPlay();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //结束轮播
+        banner.stopAutoPlay();
+    }
 }
