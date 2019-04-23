@@ -83,4 +83,6 @@ dependencies {
     implementation 'com.blankj:utilcode:1.23.7'
     //banner
     implementation 'com.youth.banner:banner:1.4.10'
+    //
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
 }
