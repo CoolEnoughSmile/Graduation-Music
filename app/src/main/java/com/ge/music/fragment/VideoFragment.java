@@ -23,7 +23,9 @@ public class VideoFragment extends BaseFragment {
         recyclerView = view.findViewById(R.id.recyclerview);
         List<VideoModel> videoModelList = new ArrayList<>(10);
         for (int i = 0; i <10; i++) {
-            videoModelList.add(new VideoModel());
+            videoModelList.add(new VideoModel("my heart will go on",
+                    "http://img0.c.yinyuetai.com/video/mv/180606/0/-M-3d975d37eb0a23a0add7412f3fb98280_240x135.png",
+                    "url",(i+1)+"万","Celine Dion"));
         }
         videoAdapter = new VideoAdapter(videoModelList);
         recyclerView.setAdapter(videoAdapter);

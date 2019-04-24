@@ -1,16 +1,18 @@
 package com.ge.music.activity;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,6 +22,7 @@ import com.ge.music.base.BaseActivity;
 import com.ge.music.base.BaseFragment;
 import com.ge.music.fragment.MusicFragment;
 import com.ge.music.fragment.VideoFragment;
+import com.ge.music.media.PlayMusicService;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
@@ -35,6 +38,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     private ImageView avatorIv;
 
+    private ImageView posterIv;
 
     @Override
     protected void initView() {
@@ -55,10 +59,15 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         mainTabBarLeft.setOnClickListener(this);
         mainTabBarRight.setOnClickListener(this);
 
-        navigationView.setNavigationItemSelectedListener(item -> {
-            ToastUtils.showShort("点击");
-            switch (item.getItemId()){
+        findViewById(R.id.play_or_pause_btn).setOnClickListener(this);
+        posterIv = findViewById(R.id.poster_iv);
 
+        navigationView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.nav_exit:
+                    finish();
+                    System.exit(0);
+                    break;
             }
             return false;
         });
@@ -68,6 +77,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 .load("http://img5.duitang.com/uploads/item/201506/07/20150607110911_kY5cP.jpeg")
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.ic_qq))
                 .into(avatorIv);
+
+        Glide.with(this)
+                .load(R.raw.testjpg)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.ic_qq))
+                .into(posterIv);
     }
 
     private BaseFragment[] prepareFragments() {
@@ -119,6 +133,20 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 break;
             case R.id.main_tab_bar_right:
                 break;
+            case R.id.play_or_pause_btn:
+                Intent intent = new Intent(this, PlayMusicService.class);
+                intent.putExtra("action","playOrPause");
+                startService(intent);
+                break;
         }
+    }
+
+    //监听手机的物理按键点击事件
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ActivityUtils.startHomeActivity();
+        }
+        return false;
     }
 }

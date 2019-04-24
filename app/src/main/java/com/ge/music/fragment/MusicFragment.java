@@ -59,7 +59,7 @@ public class MusicFragment extends BaseFragment {
         list.add("http://p1.music.126.net/AnCyFQlk8M6lqMHu381afg==/109951164019008126.jpg");
         list.add("http://p1.music.126.net/4Z0Vd27keWfLz8lcx731NA==/109951164017932547.jpg");
 
-        banner = (Banner) LayoutInflater.from(getContext()).inflate(R.layout.music_banner,(ViewGroup) getView(),false);
+        banner = (Banner) LayoutInflater.from(getContext()).inflate(R.layout.view_music_banner,(ViewGroup) getView(),false);
         banner.setImageLoader(new BannerImageLoader())
                 .setImages(list)
                 .setBannerAnimation(Transformer.Stack)

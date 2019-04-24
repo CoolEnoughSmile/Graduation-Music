@@ -31,7 +31,6 @@
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/TranslucentTheme"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
             android:label="主页"/>
 
@@ -66,6 +65,10 @@
             android:screenOrientation="portrait"
             android:label="重置密码"/>
 
+        <service android:name=".media.PlayMusicService"
+            android:process=":music"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -47,6 +47,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.login_btn:
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
 //                loginWithPhoneNumber();
                 break;
             case R.id.qq_btn:

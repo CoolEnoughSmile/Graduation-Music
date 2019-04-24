@@ -19,8 +19,8 @@ import static com.bumptech.glide.load.resource.bitmap.VideoDecoder.FRAME_OPTION;
 public class VideoFirstFrameLoader {
 
     @SuppressLint("CheckResult")
-    public static void load(final Context context, String uri, ImageView imageView, long frameTimeMicros) {
-        RequestOptions requestOptions = RequestOptions.frameOf(frameTimeMicros);
+    public static void load(final Context context, String uri, ImageView imageView) {
+        RequestOptions requestOptions = RequestOptions.frameOf(1);
         requestOptions.set(FRAME_OPTION, MediaMetadataRetriever.OPTION_CLOSEST);
         requestOptions.transform(new BitmapTransformation() {
             @Override

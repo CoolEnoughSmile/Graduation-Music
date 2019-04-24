@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.youth.banner.Banner xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:delay_time="3000"
+    android:padding="10dp"
+    app:scroll_time="1500"
+    app:image_scale_type="fit_xy"
+    android:id="@+id/banner">
+
+</com.youth.banner.Banner>

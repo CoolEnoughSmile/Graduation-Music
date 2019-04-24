@@ -66,17 +66,19 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@color/colorPrimaryDark"
+                android:src="@mipmap/ic_play_menu"
                 android:id="@+id/music_menu_btn"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginRight="10dp"/>
 
-            <ImageView
+            <CheckBox
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@color/colorPrimaryDark"
+                android:checked="false"
+                android:button="@drawable/main_page_music_play_btn"
+                android:id="@+id/play_or_pause_btn"
                 app:layout_constraintTop_toTopOf="@+id/music_menu_btn"
                 app:layout_constraintRight_toLeftOf="@+id/music_menu_btn"
                 android:layout_marginRight="15dp"/>
