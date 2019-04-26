@@ -39,7 +39,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file { "D:\\study\\software\\AndroidProjects\\Graduation-Music\\ge-music.jks" }//存放签名key的本地路径
+            storeFile file { "D:\\workspace\\Graduation-Music\\ge-music.jks" }//存放签名key的本地路径
             //签名密码
             storePassword "gemusic2019"
             //别名

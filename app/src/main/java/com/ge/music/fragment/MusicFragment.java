@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.R;
 import com.ge.music.adapter.MusicAdapter;
 import com.ge.music.base.BaseFragment;
@@ -33,6 +34,14 @@ public class MusicFragment extends BaseFragment {
 
     private void initRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.recyclerview);
+        initMusicAdapter();
+        recyclerView.setAdapter(musicAdapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        musicAdapter.bindToRecyclerView(recyclerView);
+    }
+
+    private void initMusicAdapter() {
         List<MusicModel> musicModelList = new ArrayList<>(10);
         for (int i=0;i<10;i++){
             MusicModel musicModel = new MusicModel("All I Have Is Love",
@@ -46,10 +55,10 @@ public class MusicFragment extends BaseFragment {
         musicAdapter = new MusicAdapter(musicModelList);
         musicAdapter.addHeaderView(banner);
         musicAdapter.setHeaderViewAsFlow(true);
-        recyclerView.setAdapter(musicAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        musicAdapter.bindToRecyclerView(recyclerView);
+
+        musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
+            ToastUtils.showLong(position + " : "+((MusicModel)adapter.getItem(position)).getPalyCount());
+        });
     }
 
     private void initBanner() {

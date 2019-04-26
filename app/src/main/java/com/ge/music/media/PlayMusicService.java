@@ -16,6 +16,7 @@ public class PlayMusicService extends Service {
     public void onCreate() {
         super.onCreate();
         mediaPlayer = MediaPlayer.create(this, R.raw.testmp3);
+        mediaPlayer.setLooping(true);
     }
 
 

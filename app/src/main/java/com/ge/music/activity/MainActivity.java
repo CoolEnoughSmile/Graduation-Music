@@ -64,6 +64,10 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()){
+                case R.id.nav_logout:
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    finish();
+                    break;
                 case R.id.nav_exit:
                     finish();
                     System.exit(0);
@@ -80,7 +84,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
         Glide.with(this)
                 .load(R.raw.testjpg)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.ic_qq))
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.placeholder_music_poster))
                 .into(posterIv);
     }
 
