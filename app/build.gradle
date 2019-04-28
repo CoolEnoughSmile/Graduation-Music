@@ -39,7 +39,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file { "D:\\workspace\\Graduation-Music\\ge-music.jks" }//存放签名key的本地路径
+            storeFile file { "../ge-music.jks" }//存放签名key的本地路径
             //签名密码
             storePassword "gemusic2019"
             //别名
@@ -85,5 +85,8 @@ dependencies {
     implementation 'com.youth.banner:banner:1.4.10'
     //
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
-
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
 }

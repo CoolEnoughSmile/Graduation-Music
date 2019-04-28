@@ -70,7 +70,6 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                     break;
                 case R.id.nav_exit:
                     finish();
-                    System.exit(0);
                     break;
             }
             return false;

@@ -7,8 +7,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.ge.music.CESView.LoadingDialog;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.http.CallHelper;
+import com.ge.music.http.GeMusicResponse;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.http.model.User;
 
 import java.util.HashMap;
 
@@ -18,11 +23,15 @@ import cn.sharesdk.framework.PlatformDb;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText phoneEdt;
     private EditText passwordEdt;
+
+    private LoadingDialog loadingDialog;
 
     protected void initView() {
         findViewById(R.id.login_btn).setOnClickListener(this);
@@ -34,6 +43,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         phoneEdt = findViewById(R.id.phone_edt);
         passwordEdt = findViewById(R.id.password_edt);
+        loadingDialog = new LoadingDialog(this);
     }
 
     @Override
@@ -46,9 +56,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_btn:
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
-//                loginWithPhoneNumber();
+                loginWithPhoneNumber();
                 break;
             case R.id.qq_btn:
                 loginWithQQ();
@@ -76,8 +84,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this, "请输入正确的手机号和密码", Toast.LENGTH_SHORT).show();
             return;
         }
+        loadingDialog.show();
         //todo 密码登录
-//        UMSSDK.loginWithPhoneNumber("86",phone,passWord,loginCallback);
+        Call<GeMusicResponse<User>> call = HttpHelper.getGeMusicServerApi().loginWithPhoneAndPassword(phone,passWord);
+        call.enqueue(new CallHelper<GeMusicResponse<User>>(){
+            @Override
+            public void onResponse(Call<GeMusicResponse<User>> call, Response<GeMusicResponse<User>> response) {
+//                loadingDialog.dismiss();
+//                GeMusicResponse res =response.body();
+//                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//                finish();
+            }
+        });
     }
 
     private void loginWithWeibo() {
