@@ -8,7 +8,7 @@ public class GeMusicResponse<T>{
     private String message;
     @SerializedName("code")
     private int code;
-    @SerializedName("user")
+    @SerializedName("data")
     private T data;
 
     public GeMusicResponse() {

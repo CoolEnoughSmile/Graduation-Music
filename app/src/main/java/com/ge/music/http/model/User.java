@@ -1,5 +1,10 @@
 package com.ge.music.http.model;
 
+import com.blankj.utilcode.util.GsonUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.SpanUtils;
+
 public class User {
 
     private String userId;
@@ -8,12 +13,12 @@ public class User {
     private String password;
     private String avator;
     private String token;
-    private char gender;
+    private String gender;
 
     public User() {
     }
 
-    public User(String userId, String userName, String phone, String password, String avator, String token, char gender) {
+    public User(String userId, String userName, String phone, String password, String avator, String token, String gender) {
         this.userId = userId;
         this.userName = userName;
         this.phone = phone;
@@ -71,11 +76,11 @@ public class User {
         this.token = token;
     }
 
-    public char getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -91,5 +96,22 @@ public class User {
                 ", gender=" + gender +
                 '}';
     }
+
+    public static void save(User user) {
+        String userStr = GsonUtils.toJson(user);
+        SPUtils.getInstance().put("user", userStr);
+    }
+
+    public static User get() {
+        String userStr = SPUtils.getInstance().getString("user");
+        User user = null;
+        try {
+            user = GsonUtils.fromJson(userStr, User.class);
+        }catch (Exception e){
+            LogUtils.e(e);
+        }
+        return user;
+    }
+
 }
 

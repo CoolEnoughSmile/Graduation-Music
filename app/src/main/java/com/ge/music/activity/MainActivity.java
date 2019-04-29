@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,8 +21,10 @@ import com.ge.music.R;
 import com.ge.music.adapter.TabLayoutPageAdapter;
 import com.ge.music.base.BaseActivity;
 import com.ge.music.base.BaseFragment;
+import com.ge.music.base.GraduationEraMusic;
 import com.ge.music.fragment.MusicFragment;
 import com.ge.music.fragment.VideoFragment;
+import com.ge.music.http.model.User;
 import com.ge.music.media.PlayMusicService;
 
 
@@ -65,8 +68,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.nav_logout:
-                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                    finish();
+                    logout();
                     break;
                 case R.id.nav_exit:
                     finish();
@@ -92,6 +94,13 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         fragments[0] = new MusicFragment();
         fragments[1] = new VideoFragment();
         return fragments;
+    }
+
+    private void logout(){
+        SPUtils.getInstance().remove("user");
+        GraduationEraMusic.setUser(null);
+        startActivity(new Intent(MainActivity.this,LoginActivity.class));
+        finish();
     }
 
     @Override

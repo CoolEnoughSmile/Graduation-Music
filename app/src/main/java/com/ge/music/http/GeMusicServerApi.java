@@ -19,10 +19,10 @@ public interface GeMusicServerApi {
 
     @FormUrlEncoded
     @POST("user/register ")
-    Call<GeMusicResponse> register(@Field("phone") String phone, @Field("password") String password);
+    Call<GeMusicResponse<User>> register(@Field("phone") String phone, @Field("password") String password);
 
     @FormUrlEncoded
     @POST("user/resetPassword ")
-    Call<GeMusicResponse> resetPassword(@Field("phone") String phone, @Field("password") String password);
+    Call<GeMusicResponse<User>> resetPassword(@Field("phone") String phone, @Field("password") String password);
 
 }

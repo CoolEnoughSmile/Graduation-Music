@@ -11,12 +11,19 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.ge.music.CESView.LoadingDialog;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.http.CallHelper;
+import com.ge.music.http.GeMusicResponse;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.http.model.User;
 import com.ge.music.utils.CountDownTimerUtils;
 import com.ge.music.utils.SMSEventHandler;
 
 import cn.smssdk.SMSSDK;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
@@ -78,8 +85,27 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     private void register(){
         //todo 注册
-        progressDialog.dismiss();
-        finish();
+        String phone = phoneEdt.getText().toString().trim();
+        String password = passwordEdt.getText().toString().trim();
+        Call<GeMusicResponse<User>> call = HttpHelper.getGeMusicServerApi().register(phone,password);
+        call.enqueue(new CallHelper<GeMusicResponse<User>>(){
+            @Override
+            public void onResponse(Call<GeMusicResponse<User>> call, Response<GeMusicResponse<User>> response) {
+                super.onResponse(call, response);
+                progressDialog.dismiss();
+                GeMusicResponse<User> geMusicResponse = response.body();
+                ToastUtils.showShort(geMusicResponse.getMessage());
+                if (geMusicResponse.getCode() == 1){
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeMusicResponse<User>> call, Throwable t) {
+                super.onFailure(call, t);
+                progressDialog.dismiss();
+            }
+        });
     }
 
     private void checkVCode() {

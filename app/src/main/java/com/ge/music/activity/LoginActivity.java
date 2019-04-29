@@ -7,9 +7,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.CESView.LoadingDialog;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.base.GraduationEraMusic;
 import com.ge.music.http.CallHelper;
 import com.ge.music.http.GeMusicResponse;
 import com.ge.music.http.HttpHelper;
@@ -44,6 +47,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         phoneEdt = findViewById(R.id.phone_edt);
         passwordEdt = findViewById(R.id.password_edt);
         loadingDialog = new LoadingDialog(this);
+
+        inputAccount();
     }
 
     @Override
@@ -86,16 +91,41 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
         loadingDialog.show();
         //todo 密码登录
-        Call<GeMusicResponse<User>> call = HttpHelper.getGeMusicServerApi().loginWithPhoneAndPassword(phone,passWord);
-        call.enqueue(new CallHelper<GeMusicResponse<User>>(){
+        Call<GeMusicResponse<User>> call = HttpHelper.getGeMusicServerApi().loginWithPhoneAndPassword(phone, passWord);
+        call.enqueue(new CallHelper<GeMusicResponse<User>>() {
             @Override
             public void onResponse(Call<GeMusicResponse<User>> call, Response<GeMusicResponse<User>> response) {
-//                loadingDialog.dismiss();
-//                GeMusicResponse res =response.body();
-//                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//                finish();
+                GeMusicResponse<User> geMusicResponse = response.body();
+                loadingDialog.dismiss();
+                if (geMusicResponse.getCode() == 1) {
+                    saveAccount(phone,passWord);
+                    User user = geMusicResponse.getData();
+                    GraduationEraMusic.setUser(user);
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                } else {
+                    ToastUtils.showShort(geMusicResponse.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeMusicResponse<User>> call, Throwable t) {
+                super.onFailure(call, t);
+                loadingDialog.dismiss();
             }
         });
+    }
+
+    private void saveAccount(String phone, String passWord) {
+        SPUtils.getInstance().put("phone",phone);
+        SPUtils.getInstance().put("password",passWord);
+    }
+
+    private void inputAccount() {
+        String phone = SPUtils.getInstance().getString("phone","");
+        String password = SPUtils.getInstance().getString("password","");
+        phoneEdt.setText(phone);
+        passwordEdt.setText(password);
     }
 
     private void loginWithWeibo() {

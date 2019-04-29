@@ -12,10 +12,17 @@ import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.base.GraduationEraMusic;
+import com.ge.music.http.CallHelper;
+import com.ge.music.http.GeMusicResponse;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.http.model.User;
 import com.ge.music.utils.CountDownTimerUtils;
 import com.ge.music.utils.SMSEventHandler;
 
 import cn.smssdk.SMSSDK;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class LoginWithVCodeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -79,9 +86,32 @@ public class LoginWithVCodeActivity extends BaseActivity implements View.OnClick
 
     private void loginWithVCode() {
         //todo 免密登录
-        progressDialog.dismiss();
-        startActivity(new Intent(LoginWithVCodeActivity.this,MainActivity.class));
-        finish();
+        String phone = phoneEdt.getText().toString().trim();
+        Call<GeMusicResponse<User>> call = HttpHelper.getGeMusicServerApi().loginWithVCode(phone);
+        call.enqueue(new CallHelper<GeMusicResponse<User>>(){
+            @Override
+            public void onResponse(Call<GeMusicResponse<User>> call, Response<GeMusicResponse<User>> response) {
+                super.onResponse(call, response);
+                progressDialog.dismiss();
+                GeMusicResponse<User> geMusicResponse = response.body();
+                if (geMusicResponse.getCode() == 1) {
+                    User user = geMusicResponse.getData();
+                    GraduationEraMusic.setUser(user);
+                    startActivity(new Intent(LoginWithVCodeActivity.this, MainActivity.class));
+                    finish();
+                } else {
+                    ToastUtils.showShort(geMusicResponse.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeMusicResponse<User>> call, Throwable t) {
+                super.onFailure(call, t);
+                progressDialog.dismiss();
+            }
+        });
+
+
     }
 
     private void checkVCode(){

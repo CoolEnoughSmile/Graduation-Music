@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import com.ge.music.R;
 import com.ge.music.base.BaseActivity;
+import com.ge.music.base.GraduationEraMusic;
 
 
 public class SplashActivity extends BaseActivity {
@@ -27,9 +28,15 @@ public class SplashActivity extends BaseActivity {
     private void gotoMainActivity() {
         handler = new Handler();
         handler.postDelayed(() -> {
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent;
+            if (GraduationEraMusic.getUser() == null){
+                intent=new Intent(this, LoginActivity.class);
+            }else {
+                intent=new Intent(this, MainActivity.class);
+            }
+            startActivity(intent);
             finish();
-        }, 2000);
+        }, 1500);
     }
 
     @Override
