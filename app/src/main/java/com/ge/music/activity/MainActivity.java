@@ -40,8 +40,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     private ImageView mainTabBarRight;
 
     private ImageView avatorIv;
+    private TextView nickNameTv;
 
     private ImageView posterIv;
+
+    private User user = GraduationEraMusic.getUser();
 
     @Override
     protected void initView() {
@@ -78,8 +81,12 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         });
 
         avatorIv = navigationView.getHeaderView(0).findViewById(R.id.avator_iv);
+        nickNameTv = navigationView.getHeaderView(0).findViewById(R.id.nickname_tv);
+        nickNameTv.setText(user == null ? user.getPhone() : user.getUserName());
+        navigationView.getMenu().findItem(R.id.nav_gender).setTitle(user.getGender().equals("m")?"男":(user.getGender().equals("f")?"女":user.getGender()));
+//        http://img5.duitang.com/uploads/item/201506/07/20150607110911_kY5cP.jpeg
         Glide.with(this)
-                .load("http://img5.duitang.com/uploads/item/201506/07/20150607110911_kY5cP.jpeg")
+                .load(user.getAvator())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.ic_qq))
                 .into(avatorIv);
 

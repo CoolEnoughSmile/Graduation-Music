@@ -158,11 +158,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String userId = platDB.getUserId();
                 String userName = platDB.getUserName();
 
+                User user = new User(userId,userName,"","",userIcon,token,gender);
                 LogUtils.i("token = " + token,
                         "gender = " + gender,
                         "userIcon = " + userIcon,
                         "userId = " + userId,
                         "userName = " + userName);
+                GraduationEraMusic.setUser(user);
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                finish();
             }
         }
 

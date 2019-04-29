@@ -5,18 +5,18 @@ public class MusicModel {
     private String musicName;
     private String poster;
     private String url;
-    private String palyCount;
+    private String playCount;
     private String singer;
     private String album;
 
     public MusicModel() {
     }
 
-    public MusicModel(String musicName,String poster, String url, String palyCount, String singer, String album) {
+    public MusicModel(String musicName, String poster, String url, String playCount, String singer, String album) {
         this.musicName = musicName;
         this.poster = poster;
         this.url = url;
-        this.palyCount = palyCount;
+        this.playCount = playCount;
         this.singer = singer;
         this.album = album;
     }
@@ -45,12 +45,12 @@ public class MusicModel {
         this.url = url;
     }
 
-    public String getPalyCount() {
-        return palyCount;
+    public String getPlayCount() {
+        return playCount;
     }
 
-    public void setPalyCount(String palyCount) {
-        this.palyCount = palyCount;
+    public void setPlayCount(String playCount) {
+        this.playCount = playCount;
     }
 
     public String getSinger() {
@@ -75,7 +75,7 @@ public class MusicModel {
                 "musicName='" + musicName + '\'' +
                 ", poster='" + poster + '\'' +
                 ", url='" + url + '\'' +
-                ", palyCount='" + palyCount + '\'' +
+                ", playCount='" + playCount + '\'' +
                 ", singer='" + singer + '\'' +
                 ", album='" + album + '\'' +
                 '}';

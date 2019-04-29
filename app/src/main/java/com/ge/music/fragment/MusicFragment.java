@@ -26,10 +26,14 @@ public class MusicFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private MusicAdapter musicAdapter;
 
+    private int pageNum = 0;
+    private final int pageSize = 15;
+
     @Override
     protected void initView(View view) {
         initBanner();
         initRecyclerView(view);
+
     }
 
     private void initRecyclerView(View view) {
@@ -43,21 +47,21 @@ public class MusicFragment extends BaseFragment {
 
     private void initMusicAdapter() {
         List<MusicModel> musicModelList = new ArrayList<>(10);
-        for (int i=0;i<10;i++){
-            MusicModel musicModel = new MusicModel("All I Have Is Love",
-                    "http://p3.music.126.net/2MsstS-M9w5-li0aRy3sUQ==/1380986606815861.jpg?param=200y200",
-                    "",
-                    (i+1)+"万",
-                    "",
-                    "");
-            musicModelList.add(musicModel);
-        }
+//        for (int i=0;i<10;i++){
+//            MusicModel musicModel = new MusicModel("All I Have Is Love",
+//                    "http://p3.music.126.net/2MsstS-M9w5-li0aRy3sUQ==/1380986606815861.jpg?param=200y200",
+//                    "",
+//                    (i+1)+"万",
+//                    "",
+//                    "");
+//            musicModelList.add(musicModel);
+//        }
         musicAdapter = new MusicAdapter(musicModelList);
         musicAdapter.addHeaderView(banner);
         musicAdapter.setHeaderViewAsFlow(true);
 
         musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
-            ToastUtils.showLong(position + " : "+((MusicModel)adapter.getItem(position)).getPalyCount());
+            ToastUtils.showLong(position + " : "+((MusicModel)adapter.getItem(position)).getPlayCount());
         });
     }
 
@@ -73,6 +77,10 @@ public class MusicFragment extends BaseFragment {
                 .setImages(list)
                 .setBannerAnimation(Transformer.Stack)
                 .start();
+    }
+
+    private void loadMusicList(boolean isRefresh){
+
     }
 
     @Override

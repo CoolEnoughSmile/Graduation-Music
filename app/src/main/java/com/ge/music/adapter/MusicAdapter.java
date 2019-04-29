@@ -31,7 +31,7 @@ public class MusicAdapter extends BaseQuickAdapter<MusicModel, BaseViewHolder> {
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                 .into((ImageView)helper.getView(R.id.poster_iv));
         helper.setText(R.id.music_name_tv,musicModel.getMusicName());
-        helper.setText(R.id.play_count_tv,musicModel.getPalyCount());
+        helper.setText(R.id.play_count_tv,musicModel.getPlayCount());
     }
 
     @Override

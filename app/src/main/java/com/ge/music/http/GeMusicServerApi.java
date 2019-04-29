@@ -1,11 +1,16 @@
 package com.ge.music.http;
 
 import com.ge.music.http.model.User;
+import com.ge.music.model.MusicModel;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface GeMusicServerApi {
 
@@ -24,5 +29,8 @@ public interface GeMusicServerApi {
     @FormUrlEncoded
     @POST("user/resetPassword ")
     Call<GeMusicResponse<User>> resetPassword(@Field("phone") String phone, @Field("password") String password);
+
+    @GET("music/getMusicList")
+    Call<GeMusicResponse<List<MusicModel>>> getMusicList(@Query("pageNum") int PageNum,@Query("pageSize") int pageSize);
 
 }
