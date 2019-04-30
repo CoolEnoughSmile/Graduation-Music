@@ -1,6 +1,11 @@
 package com.ge.music.activity;
 
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -8,11 +13,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -23,6 +30,8 @@ import com.ge.music.base.BaseActivity;
 import com.ge.music.base.BaseFragment;
 import com.ge.music.base.GraduationEraMusic;
 import com.ge.music.fragment.MusicFragment;
+import com.ge.music.fragment.MusicMenuDialogFragment;
+import com.ge.music.fragment.PlayingDialogFragment;
 import com.ge.music.fragment.VideoFragment;
 import com.ge.music.http.model.User;
 import com.ge.music.media.PlayMusicService;
@@ -44,7 +53,43 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     private ImageView posterIv;
 
+    private PlayingDialogFragment playingDialogFragment;
+    private MusicMenuDialogFragment musicMenuDialogFragment;
+
+    private ServiceConnection connection;
+    private PlayMusicService musicService;
+
+    private MusicFragment musicFragment;
+
     private User user = GraduationEraMusic.getUser();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initConnection();
+    }
+
+    private void initConnection() {
+        connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                // 获取Binder
+                PlayMusicService.MusicBinder binder = (PlayMusicService.MusicBinder) service;
+                musicService = binder.getService();
+                musicFragment.onMusicServiceCreated(musicService);
+                LogUtils.d( "绑定成功调用：onServiceConnected");
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                musicService=null;
+            }
+        };
+        Intent intent = new Intent(this, PlayMusicService.class);
+//                intent.putExtra("action","playOrPause");
+//                startService(intent);
+        bindService(intent, connection, Service.BIND_AUTO_CREATE);
+    }
 
     @Override
     protected void initView() {
@@ -59,11 +104,17 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         tabLayout.addOnTabSelectedListener(this);
 //        tabLayout.getTabAt(1).select();
 
+        playingDialogFragment = new PlayingDialogFragment();
+        musicMenuDialogFragment = new MusicMenuDialogFragment();
+
         mainTabBarLeft = findViewById(R.id.main_tab_bar_left);
         mainTabBarRight = findViewById(R.id.main_tab_bar_right);
 
         mainTabBarLeft.setOnClickListener(this);
         mainTabBarRight.setOnClickListener(this);
+
+        findViewById(R.id.music_play_controller).setOnClickListener(this);
+        findViewById(R.id.music_menu_btn).setOnClickListener(this);
 
         findViewById(R.id.play_or_pause_btn).setOnClickListener(this);
         posterIv = findViewById(R.id.poster_iv);
@@ -98,7 +149,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     private BaseFragment[] prepareFragments() {
         BaseFragment[] fragments = new BaseFragment[2];
-        fragments[0] = new MusicFragment();
+        musicFragment = new MusicFragment();
+        fragments[0] = musicFragment;
         fragments[1] = new VideoFragment();
         return fragments;
     }
@@ -153,10 +205,23 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             case R.id.main_tab_bar_right:
                 break;
             case R.id.play_or_pause_btn:
-                Intent intent = new Intent(this, PlayMusicService.class);
-                intent.putExtra("action","playOrPause");
-                startService(intent);
+                playOrPause();
                 break;
+            case R.id.music_menu_btn:
+                musicMenuDialogFragment.show(getSupportFragmentManager(),"MusicMenuDialogFragment");
+                break;
+            case R.id.music_play_controller:
+                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
+                break;
+        }
+    }
+
+    private void playOrPause() {
+        CheckBox checkBox = findViewById(R.id.play_or_pause_btn);
+        if (checkBox.isChecked()){
+            musicService.start();
+        }else {
+            musicService.pause();
         }
     }
 
@@ -168,4 +233,5 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         }
         return false;
     }
+
 }

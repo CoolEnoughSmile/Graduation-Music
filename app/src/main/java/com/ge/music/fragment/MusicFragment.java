@@ -2,6 +2,10 @@ package com.ge.music.fragment;
 
 
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,9 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ge.music.R;
+import com.ge.music.activity.MainActivity;
 import com.ge.music.adapter.MusicAdapter;
 import com.ge.music.base.BaseFragment;
+import com.ge.music.http.CallHelper;
+import com.ge.music.http.GeMusicResponse;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 import com.ge.music.utils.BannerImageLoader;
 import com.youth.banner.Banner;
@@ -20,20 +30,35 @@ import com.youth.banner.Transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 public class MusicFragment extends BaseFragment {
 
     private Banner banner;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private MusicAdapter musicAdapter;
 
-    private int pageNum = 0;
+    private int pageNum = 1;
     private final int pageSize = 15;
+    private PlayMusicService musicService;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadMusicList(true);
+    }
 
     @Override
     protected void initView(View view) {
         initBanner();
         initRecyclerView(view);
-
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            pageNum = 1;
+            loadMusicList(true);
+        });
     }
 
     private void initRecyclerView(View view) {
@@ -46,22 +71,13 @@ public class MusicFragment extends BaseFragment {
     }
 
     private void initMusicAdapter() {
-        List<MusicModel> musicModelList = new ArrayList<>(10);
-//        for (int i=0;i<10;i++){
-//            MusicModel musicModel = new MusicModel("All I Have Is Love",
-//                    "http://p3.music.126.net/2MsstS-M9w5-li0aRy3sUQ==/1380986606815861.jpg?param=200y200",
-//                    "",
-//                    (i+1)+"万",
-//                    "",
-//                    "");
-//            musicModelList.add(musicModel);
-//        }
+        List<MusicModel> musicModelList = new ArrayList<>();
         musicAdapter = new MusicAdapter(musicModelList);
         musicAdapter.addHeaderView(banner);
         musicAdapter.setHeaderViewAsFlow(true);
 
-        musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
-            ToastUtils.showLong(position + " : "+((MusicModel)adapter.getItem(position)).getPlayCount());
+        musicAdapter.setOnLoadMoreListener(() ->{
+            loadMusicList(false);
         });
     }
 
@@ -80,7 +96,39 @@ public class MusicFragment extends BaseFragment {
     }
 
     private void loadMusicList(boolean isRefresh){
+        if (!swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+        Call<GeMusicResponse<List<MusicModel>>> call = HttpHelper.getGeMusicServerApi().getMusicList(pageNum,pageSize);
+        call.enqueue(new CallHelper<GeMusicResponse<List<MusicModel>>>(){
+            @Override
+            public void onResponse(Call<GeMusicResponse<List<MusicModel>>> call, Response<GeMusicResponse<List<MusicModel>>> response) {
+                super.onResponse(call, response);
+                swipeRefreshLayout.setRefreshing(false);
+                GeMusicResponse<List<MusicModel>> geMusicResponse = response.body();
+                if (geMusicResponse.getCode() == 1){
+                    List<MusicModel> musicModelList = geMusicResponse.getData();
+                    if (isRefresh){
+                        musicAdapter.setNewData(musicModelList);
+                    }else {
+                        musicAdapter.addData(musicModelList);
+                        musicAdapter.loadMoreComplete();
+                        pageNum++;
+                    }
+                    musicAdapter.notifyDataSetChanged();
+                }else {
+                    ToastUtils.showShort(geMusicResponse.getMessage());
+                    musicAdapter.loadMoreEnd();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<GeMusicResponse<List<MusicModel>>> call, Throwable t) {
+                super.onFailure(call, t);
+                swipeRefreshLayout.setRefreshing(false);
+                musicAdapter.loadMoreFail();
+            }
+        });
     }
 
     @Override
@@ -107,4 +155,13 @@ public class MusicFragment extends BaseFragment {
         //结束轮播
         banner.stopAutoPlay();
     }
+
+    public void onMusicServiceCreated(PlayMusicService musicService){
+        musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
+            MusicModel music = (MusicModel) adapter.getItem(position);
+            ToastUtils.showLong(((MusicModel)adapter.getItem(position)).getMusicName());
+            musicService.addNewAndPlay(music);
+        });
+    }
+
 }

@@ -3,51 +3,85 @@ package com.ge.music.media;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.IBinder;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.ge.music.R;
+import com.ge.music.model.MusicModel;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class PlayMusicService extends Service {
 
     private MediaPlayer mediaPlayer;
+    private MusicBinder binder = new MusicBinder();
     private static final String ACTION_PLAY = "play";
-    private static final int REQUEST_CODE = 100;
+    private List<MusicModel> musicList = new ArrayList<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
         mediaPlayer = MediaPlayer.create(this, R.raw.testmp3);
-        mediaPlayer.setLooping(true);
+//        mediaPlayer.set
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        createNotification();
-        if (mediaPlayer != null) {
-            String action = intent.getStringExtra("action");
-            switch (action) {
-                case "playOrPause":
-                    if (mediaPlayer.isPlaying()){
-                        mediaPlayer.pause();
-                    }else {
-                        mediaPlayer.start();
-                    }
-                    break;
-                case "stop":
-                    mediaPlayer.stop();
-                    mediaPlayer.reset();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                    break;
-            }
-        }
+//        if (mediaPlayer != null) {
+//            String action = intent.getStringExtra("action");
+//            switch (action) {
+//                case "stop":
+//                    mediaPlayer.stop();
+//                    mediaPlayer.reset();
+//                    mediaPlayer.release();
+//                    mediaPlayer = null;
+//                    break;
+//            }
+//        }
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        return binder;
+    }
 
-        return null;
+    public class MusicBinder extends Binder {
+        public PlayMusicService getService(){
+            return PlayMusicService.this;
+        }
+    }
+
+    public void start(){
+        if (!mediaPlayer.isPlaying()){
+            mediaPlayer.start();
+        }
+    }
+
+    public void pause(){
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
+    }
+
+    public void next(){
+
+    }
+
+    public void addNewAndPlay(MusicModel musicModel){
+        LogUtils.d(musicModel);
+        try {
+            mediaPlayer.setDataSource(musicModel.getUrl());
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*private void createNotification() {

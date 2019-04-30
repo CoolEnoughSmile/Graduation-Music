@@ -26,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             style="?attr/selectableItemBackgroundBorderless"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:id="@+id/music_play_controller">
 
             <View
                 android:layout_width="match_parent"
