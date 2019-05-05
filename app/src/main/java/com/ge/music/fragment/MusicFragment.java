@@ -2,6 +2,7 @@ package com.ge.music.fragment;
 
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,11 +44,18 @@ public class MusicFragment extends BaseFragment {
     private int pageNum = 1;
     private final int pageSize = 15;
     private PlayMusicService musicService;
+    private MainActivity mainActivity;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadMusicList(true);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivity = (MainActivity) context;
     }
 
     @Override
@@ -68,6 +76,12 @@ public class MusicFragment extends BaseFragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
         musicAdapter.bindToRecyclerView(recyclerView);
+        musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
+            MusicModel music = (MusicModel) adapter.getItem(position);
+//            ToastUtils.showLong(((MusicModel)adapter.getItem(position)).getMusicName());
+            mainActivity.play(music);
+            mainActivity.getList().add(0,music);
+        });
     }
 
     private void initMusicAdapter() {
@@ -155,13 +169,4 @@ public class MusicFragment extends BaseFragment {
         //结束轮播
         banner.stopAutoPlay();
     }
-
-    public void onMusicServiceCreated(PlayMusicService musicService){
-        musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
-            MusicModel music = (MusicModel) adapter.getItem(position);
-            ToastUtils.showLong(((MusicModel)adapter.getItem(position)).getMusicName());
-            musicService.addNewAndPlay(music);
-        });
-    }
-
 }

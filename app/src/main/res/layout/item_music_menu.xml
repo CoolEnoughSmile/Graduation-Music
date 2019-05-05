@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:id="@+id/music_name_tv"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/singer_tv"
+        android:layout_toRightOf="@id/music_name_tv"
+        android:layout_marginLeft="5dp"/>
+
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/ic_cross"
+        android:background="@null"
+        android:id="@+id/remove_btn"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"/>
+
+</RelativeLayout>

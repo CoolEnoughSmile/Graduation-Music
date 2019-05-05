@@ -1,6 +1,9 @@
 package com.ge.music.model;
 
-public class MusicModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class MusicModel implements Parcelable {
 
     private String musicName;
     private String poster;
@@ -80,4 +83,53 @@ public class MusicModel {
                 ", album='" + album + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(musicName);
+        dest.writeString(poster);
+        dest.writeString(url);
+        dest.writeString(playCount);
+        dest.writeString(singer);
+        dest.writeString(album);
+    }
+
+    public MusicModel(Parcel source) {
+        musicName = source.readString();
+        poster = source.readString();
+        url = source.readString();
+        playCount = source.readString();
+        singer = source.readString();
+        album = source.readString();
+    }
+
+    /**
+     * 负责反序列化
+     */
+    public static final Creator<MusicModel> CREATOR = new Creator<MusicModel>() {
+        /**
+         * 从序列化对象中，获取原始的对象
+         * @param source
+         * @return
+         */
+        @Override
+        public MusicModel createFromParcel(Parcel source) {
+            return new MusicModel(source);
+        }
+
+        /**
+         * 创建指定长度的原始对象数组
+         * @param size
+         * @return
+         */
+        @Override
+        public MusicModel[] newArray(int size) {
+            return new MusicModel[0];
+        }
+    };
 }

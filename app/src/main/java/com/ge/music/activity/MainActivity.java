@@ -1,11 +1,12 @@
 package com.ge.music.activity;
 
-import android.app.Service;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -19,8 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.LogUtils;
+
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -35,6 +37,11 @@ import com.ge.music.fragment.PlayingDialogFragment;
 import com.ge.music.fragment.VideoFragment;
 import com.ge.music.http.model.User;
 import com.ge.music.media.PlayMusicService;
+import com.ge.music.model.MusicModel;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
@@ -52,43 +59,36 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     private TextView nickNameTv;
 
     private ImageView posterIv;
+    private CheckBox playOrPauseBtn;
+    private TextView musicNameTv;
+    private TextView singerTv;
 
     private PlayingDialogFragment playingDialogFragment;
     private MusicMenuDialogFragment musicMenuDialogFragment;
 
-    private ServiceConnection connection;
-    private PlayMusicService musicService;
 
     private MusicFragment musicFragment;
 
     private User user = GraduationEraMusic.getUser();
 
+    private List<MusicModel> list = new ArrayList<>();
+    private int currentMusicIndex = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initConnection();
     }
 
-    private void initConnection() {
-        connection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                // 获取Binder
-                PlayMusicService.MusicBinder binder = (PlayMusicService.MusicBinder) service;
-                musicService = binder.getService();
-                musicFragment.onMusicServiceCreated(musicService);
-                LogUtils.d( "绑定成功调用：onServiceConnected");
-            }
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putParcelableArray("list", (Parcelable[]) list.toArray());
+    }
 
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                musicService=null;
-            }
-        };
-        Intent intent = new Intent(this, PlayMusicService.class);
-//                intent.putExtra("action","playOrPause");
-//                startService(intent);
-        bindService(intent, connection, Service.BIND_AUTO_CREATE);
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        list = savedInstanceState.getParcelableArrayList("list");
     }
 
     @Override
@@ -118,6 +118,9 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
         findViewById(R.id.play_or_pause_btn).setOnClickListener(this);
         posterIv = findViewById(R.id.poster_iv);
+        playOrPauseBtn = findViewById(R.id.play_or_pause_btn);
+        musicNameTv = findViewById(R.id.music_name_tv);
+        singerTv = findViewById(R.id.singer_tv);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()){
@@ -217,12 +220,10 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     }
 
     private void playOrPause() {
-        CheckBox checkBox = findViewById(R.id.play_or_pause_btn);
-        if (checkBox.isChecked()){
-            musicService.start();
-        }else {
-            musicService.pause();
-        }
+        Intent intent = new Intent(this,PlayMusicService.class);
+        intent.putExtra("action","playOrPause");
+//        intent.putExtra("",);
+        startService(intent);
     }
 
     //监听手机的物理按键点击事件
@@ -234,4 +235,58 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         return false;
     }
 
+    public void play(MusicModel musicModel){
+        Intent intent = new Intent(this,PlayMusicService.class);
+        intent.putExtra("action","play");
+        intent.putExtra("musicModel",musicModel);
+        startService(intent);
+        Glide.with(this)
+                .load(musicModel.getPoster())
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.placeholder_music_poster))
+                .into(posterIv);
+        musicNameTv.setText(musicModel.getMusicName());
+        singerTv.setText(musicModel.getSinger());
+    }
+
+    private BroadcastReceiver musicBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String status = intent.getStringExtra("status");
+//            MusicModel musicModel = intent.getParcelableExtra("musicModel");
+            switch (status){
+                case "error":
+                    ToastUtils.showShort("链接失效");
+                    playOrPauseBtn.setChecked(false);
+                    break;
+                case "start":
+                    playOrPauseBtn.setChecked(true);
+                    currentMusicIndex = 0;
+                    break;
+                case "completion":
+                    playOrPauseBtn.setChecked(false);
+                    if (currentMusicIndex < list.size()) {
+                        play(list.get(currentMusicIndex++));
+                    }
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("musicService");
+        registerReceiver(musicBroadcastReceiver,intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(musicBroadcastReceiver);
+    }
+
+    public List<MusicModel> getList() {
+        return list;
+    }
 }

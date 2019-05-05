@@ -1,153 +1,90 @@
 package com.ge.music.media;
 
-import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Binder;
-import android.os.Build;
+import android.net.Uri;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.ge.music.R;
 import com.ge.music.model.MusicModel;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 
 public class PlayMusicService extends Service {
 
-    public static final String CHANNEL_ID = "music_notification";
-    private static final int NOTIFY_MODE_NONE = 0;
-    private static final int NOTIFY_MODE_FOREGROUND = 1;
-    private static final int NOTIFY_MODE_BACKGROUND = 2;
-
     private MediaPlayer mediaPlayer;
-    private MusicBinder binder = new MusicBinder();
-    private static final String ACTION_PLAY = "play";
-    private Queue<MusicModel> musicModelQueue = new LinkedList<>();
-
-    private NotificationManagerCompat notificationManager;
-
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        notificationManager = NotificationManagerCompat.from(this);
-        createNotificationChannel();
-        mediaPlayer = MediaPlayer.create(this, R.raw.testmp3);
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createNotificationChannel() {
-        CharSequence name = "GE-Music";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-        manager.createNotificationChannel(mChannel);
-    }
-
-    private void updateNotification() {
-        final int newNotifyMode;
-        if (mediaPlayer.isPlaying()) {
-            newNotifyMode = NOTIFY_MODE_FOREGROUND;
-        } else {
-            newNotifyMode = NOTIFY_MODE_BACKGROUND;
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(this,Uri.parse("http://music.163.com/song/media/outer/url?id=38592976.mp3"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        int notificationId = hashCode();
-        if (mNotifyMode != newNotifyMode) {
-            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
-                stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
-            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
-                notificationManager.cancel(notificationId);
-            }
-        }
-
-        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
-            startForeground(notificationId, buildNotification());
-        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
-            notificationManager.notify(notificationId, buildNotification());
-        }
-    }
-
-    private Notification buildNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID);
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-//        createNotification();
-//        if (mediaPlayer != null) {
-//            String action = intent.getStringExtra("action");
-//            switch (action) {
-//                case "stop":
-//                    mediaPlayer.stop();
-//                    mediaPlayer.reset();
-//                    mediaPlayer.release();
-//                    mediaPlayer = null;
-//                    break;
-//            }
-//        }
-        return super.onStartCommand(intent, flags, startId);
+        mediaPlayer.setOnPreparedListener(mediaPlayer -> {
+            mediaPlayer.start();
+            Intent intent = new Intent("musicService");
+            intent.putExtra("status","start");
+            sendBroadcast(intent);
+        });
+        mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+            Intent intent = new Intent("musicService");
+            intent.putExtra("status","error");
+            sendBroadcast(intent);
+            LogUtils.d(what,extra);
+            return false;
+        });
+        mediaPlayer.setOnCompletionListener(mp -> {
+            Intent intent = new Intent("musicService");
+            intent.putExtra("status","completion");
+            sendBroadcast(intent);
+        });
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return null;
     }
-
-    public class MusicBinder extends Binder {
-        public PlayMusicService getService() {
-            return PlayMusicService.this;
-        }
-    }
-
-    public void start() {
-        if (!mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-        }
-    }
-
-    public void pause() {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-        }
-    }
-
-    public void next() {
-
-    }
-
-    public void addNewAndPlay(MusicModel musicModel) {
-        LogUtils.d(musicModel);
-        try {
-            mediaPlayer.setDataSource(musicModel.getUrl());
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = intent.getStringExtra("action");
+        MusicModel musicModel = intent.getParcelableExtra("musicModel");
+        switch (action) {
+            case "playOrPause":
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                } else {
+                    if (mediaPlayer.getCurrentPosition() > 0 ){
+                        mediaPlayer.start();
+                    }else {
+                        mediaPlayer.prepareAsync();
+                    }
+                }
+                break;
+            case "play":
+                try {
+                    mediaPlayer.reset();
+                    mediaPlayer.setDataSource(musicModel.getUrl());
+                    mediaPlayer.prepareAsync();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-//        stopForeground(true);
         super.onDestroy();
+        if (mediaPlayer != null){
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }
