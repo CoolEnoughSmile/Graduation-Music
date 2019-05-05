@@ -59,7 +59,7 @@ public class PlayMusicService extends Service {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                 } else {
-                    if (mediaPlayer.getCurrentPosition() > 0 ){
+                    if (mediaPlayer.getCurrentPosition() >= 0 ){
                         mediaPlayer.start();
                     }else {
                         mediaPlayer.prepareAsync();
