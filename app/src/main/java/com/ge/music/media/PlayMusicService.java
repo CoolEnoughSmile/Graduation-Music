@@ -1,34 +1,89 @@
 package com.ge.music.media;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.ge.music.R;
 import com.ge.music.model.MusicModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 public class PlayMusicService extends Service {
 
+    public static final String CHANNEL_ID = "music_notification";
+    private static final int NOTIFY_MODE_NONE = 0;
+    private static final int NOTIFY_MODE_FOREGROUND = 1;
+    private static final int NOTIFY_MODE_BACKGROUND = 2;
+
     private MediaPlayer mediaPlayer;
     private MusicBinder binder = new MusicBinder();
     private static final String ACTION_PLAY = "play";
-    private List<MusicModel> musicList = new ArrayList<>();
+    private Queue<MusicModel> musicModelQueue = new LinkedList<>();
+
+    private NotificationManagerCompat notificationManager;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        notificationManager = NotificationManagerCompat.from(this);
+        createNotificationChannel();
         mediaPlayer = MediaPlayer.create(this, R.raw.testmp3);
-//        mediaPlayer.set
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        CharSequence name = "GE-Music";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        manager.createNotificationChannel(mChannel);
+    }
+
+    private void updateNotification() {
+        final int newNotifyMode;
+        if (mediaPlayer.isPlaying()) {
+            newNotifyMode = NOTIFY_MODE_FOREGROUND;
+        } else {
+            newNotifyMode = NOTIFY_MODE_BACKGROUND;
+        }
+
+        int notificationId = hashCode();
+        if (mNotifyMode != newNotifyMode) {
+            if (mNotifyMode == NOTIFY_MODE_FOREGROUND) {
+                stopForeground(newNotifyMode == NOTIFY_MODE_NONE);
+            } else if (newNotifyMode == NOTIFY_MODE_NONE) {
+                notificationManager.cancel(notificationId);
+            }
+        }
+
+        if (newNotifyMode == NOTIFY_MODE_FOREGROUND) {
+            startForeground(notificationId, buildNotification());
+        } else if (newNotifyMode == NOTIFY_MODE_BACKGROUND) {
+            notificationManager.notify(notificationId, buildNotification());
+        }
+    }
+
+    private Notification buildNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID);
+
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -53,28 +108,28 @@ public class PlayMusicService extends Service {
     }
 
     public class MusicBinder extends Binder {
-        public PlayMusicService getService(){
+        public PlayMusicService getService() {
             return PlayMusicService.this;
         }
     }
 
-    public void start(){
-        if (!mediaPlayer.isPlaying()){
+    public void start() {
+        if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
     }
 
-    public void pause(){
-        if (mediaPlayer.isPlaying()){
+    public void pause() {
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
     }
 
-    public void next(){
+    public void next() {
 
     }
 
-    public void addNewAndPlay(MusicModel musicModel){
+    public void addNewAndPlay(MusicModel musicModel) {
         LogUtils.d(musicModel);
         try {
             mediaPlayer.setDataSource(musicModel.getUrl());
@@ -84,29 +139,6 @@ public class PlayMusicService extends Service {
         }
     }
 
-    /*private void createNotification() {
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        createNotificationChannel(manager,"musicService","musicService",NotificationManager.IMPORTANCE_DEFAULT);
-        RemoteViews remoteView = new  RemoteViews(this.getPackageName(),R.layout.view_music_service);
-        Intent intentPlay = new Intent(ACTION_PLAY);
-        PendingIntent pIntentPlay = PendingIntent.getBroadcast(this.getApplicationContext(),
-                REQUEST_CODE, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteView.setOnClickPendingIntent(R.id.poster_iv,pIntentPlay);
-        Notification notification = new NotificationCompat.Builder(this,"musicService")
-                .setContent(remoteView)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.logo)
-                .build();
-        startForeground(111,notification);
-    }*/
-
-   /* @TargetApi(Build.VERSION_CODES.O)
-    private void createNotificationChannel(NotificationManager manager,String channelId, String channelName, int importance) {
-        NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-        channel.setShowBadge(true);
-        manager.createNotificationChannel(channel);
-    }*/
 
     @Override
     public boolean onUnbind(Intent intent) {
