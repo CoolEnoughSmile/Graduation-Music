@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
 import com.ge.music.adapter.MusicAdapter;
@@ -22,7 +21,6 @@ import com.ge.music.base.BaseFragment;
 import com.ge.music.http.CallHelper;
 import com.ge.music.http.GeMusicResponse;
 import com.ge.music.http.HttpHelper;
-import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 import com.ge.music.utils.BannerImageLoader;
 import com.youth.banner.Banner;
@@ -43,7 +41,6 @@ public class MusicFragment extends BaseFragment {
 
     private int pageNum = 1;
     private final int pageSize = 15;
-    private PlayMusicService musicService;
     private MainActivity mainActivity;
 
     @Override
