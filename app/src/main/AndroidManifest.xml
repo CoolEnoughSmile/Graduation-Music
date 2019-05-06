@@ -32,6 +32,7 @@
             android:name=".activity.MainActivity"
             android:theme="@style/TranslucentTheme"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:label="主页"/>
 
         <activity

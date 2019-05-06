@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <me.wcy.lrcview.LrcView
+    <cn.zhaiyifan.lyric.widget.LyricView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"

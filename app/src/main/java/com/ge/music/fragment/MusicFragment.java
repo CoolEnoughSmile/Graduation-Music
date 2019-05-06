@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
@@ -46,6 +47,7 @@ public class MusicFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        musicAdapter.setEnableLoadMore(false);
         loadMusicList(true);
     }
 
@@ -119,16 +121,18 @@ public class MusicFragment extends BaseFragment {
                 GeMusicResponse<List<MusicModel>> geMusicResponse = response.body();
                 if (geMusicResponse.getCode() == 1){
                     List<MusicModel> musicModelList = geMusicResponse.getData();
+                    LogUtils.d(musicModelList.size());
                     if (isRefresh){
+                        musicAdapter.getData().clear();
                         musicAdapter.setNewData(musicModelList);
                     }else {
                         musicAdapter.addData(musicModelList);
                         musicAdapter.loadMoreComplete();
-                        pageNum++;
+                        musicAdapter.notifyDataSetChanged();
                     }
-                    musicAdapter.notifyDataSetChanged();
+                    pageNum++;
+                    musicAdapter.setEnableLoadMore(true);
                 }else {
-                    ToastUtils.showShort(geMusicResponse.getMessage());
                     musicAdapter.loadMoreEnd();
                 }
             }

@@ -1,6 +1,7 @@
 package com.ge.music.fragment;
 
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.ge.music.R;
 import com.ge.music.adapter.VideoAdapter;
 import com.ge.music.base.BaseFragment;
+import com.ge.music.media.MVActivity;
 import com.ge.music.model.VideoModel;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class VideoFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
+        videoAdapter.setOnItemClickListener((adapter, view1, position) -> startActivity(new Intent(getContext(),MVActivity.class)));
     }
 
     @Override

@@ -72,23 +72,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     private User user = GraduationEraMusic.getUser();
 
     private List<MusicModel> list = new ArrayList<>();
-    private int currentMusicIndex = 0;
+    public int currentMusicIndex = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        outState.putParcelableArray("list", (Parcelable[]) list.toArray());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        list = savedInstanceState.getParcelableArrayList("list");
     }
 
     @Override
@@ -278,6 +266,14 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("musicService");
         registerReceiver(musicBroadcastReceiver,intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (playingDialogFragment.isVisible()){
+            playingDialogFragment.dismiss();
+        }
     }
 
     @Override

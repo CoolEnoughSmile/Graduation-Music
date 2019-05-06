@@ -16,8 +16,6 @@ import java.util.List;
 
 public class MusicAdapter extends BaseQuickAdapter<MusicModel, BaseViewHolder> {
 
-    private List<MusicModel> musicList;
-
     public MusicAdapter(List<MusicModel> musicList) {
         super(R.layout.item_music,musicList);
     }
@@ -53,5 +51,10 @@ public class MusicAdapter extends BaseQuickAdapter<MusicModel, BaseViewHolder> {
                 }
             });
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
     }
 }

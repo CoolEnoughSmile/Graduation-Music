@@ -11,17 +11,19 @@ public class MusicModel implements Parcelable {
     private String playCount;
     private String singer;
     private String album;
+    private String lrc;
 
     public MusicModel() {
     }
 
-    public MusicModel(String musicName, String poster, String url, String playCount, String singer, String album) {
+    public MusicModel(String musicName, String poster, String url, String playCount, String singer, String album, String lrc) {
         this.musicName = musicName;
         this.poster = poster;
         this.url = url;
         this.playCount = playCount;
         this.singer = singer;
         this.album = album;
+        this.lrc = lrc;
     }
 
     public String getMusicName() {
@@ -72,6 +74,14 @@ public class MusicModel implements Parcelable {
         this.album = album;
     }
 
+    public String getLrc() {
+        return lrc;
+    }
+
+    public void setLrc(String lrc) {
+        this.lrc = lrc;
+    }
+
     @Override
     public String toString() {
         return "MusicModel{" +
@@ -81,6 +91,7 @@ public class MusicModel implements Parcelable {
                 ", playCount='" + playCount + '\'' +
                 ", singer='" + singer + '\'' +
                 ", album='" + album + '\'' +
+                ", lrc='" + lrc + '\'' +
                 '}';
     }
 
@@ -97,6 +108,7 @@ public class MusicModel implements Parcelable {
         dest.writeString(playCount);
         dest.writeString(singer);
         dest.writeString(album);
+        dest.writeString(lrc);
     }
 
     public MusicModel(Parcel source) {
@@ -106,6 +118,7 @@ public class MusicModel implements Parcelable {
         playCount = source.readString();
         singer = source.readString();
         album = source.readString();
+        lrc = source.readString();
     }
 
     /**

@@ -93,4 +93,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     //歌词
     implementation 'me.wcy:lrcview:2.0.1'
+    implementation 'cn.zhaiyifan:lyricview:1.0.1'
 }

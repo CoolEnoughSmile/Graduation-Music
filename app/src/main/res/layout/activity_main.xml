@@ -52,6 +52,9 @@
                 android:text="Dream It Possible"
                 android:id="@+id/music_name_tv"
                 android:layout_marginLeft="10dp"
+                android:maxLines="1"
+                android:maxWidth="200dp"
+                android:ellipsize="end"
                 app:layout_constraintLeft_toRightOf="@+id/poster_iv"
                 app:layout_constraintTop_toTopOf="@+id/poster_iv"
                 />
@@ -59,8 +62,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="200dp"
                 android:textSize="12sp"
                 android:text="Delacey"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:id="@+id/singer_tv"
                 app:layout_constraintLeft_toLeftOf="@+id/music_name_tv"
                 app:layout_constraintTop_toBottomOf="@+id/music_name_tv"
