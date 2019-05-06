@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -20,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
-
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -40,7 +37,6 @@ import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -77,6 +73,10 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("musicService");
+        registerReceiver(musicBroadcastReceiver,intentFilter);
     }
 
     @Override
@@ -252,8 +252,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                     break;
                 case "completion":
                     playOrPauseBtn.setChecked(false);
-                    if (currentMusicIndex < list.size()) {
-                        play(list.get(currentMusicIndex++));
+                    if (currentMusicIndex < list.size()-1) {
+                        play(list.get(++currentMusicIndex));
                     }
                     break;
             }
@@ -263,9 +263,6 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("musicService");
-        registerReceiver(musicBroadcastReceiver,intentFilter);
     }
 
     @Override
@@ -279,10 +276,15 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(musicBroadcastReceiver);
     }
 
     public List<MusicModel> getList() {
         return list;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(musicBroadcastReceiver);
     }
 }
