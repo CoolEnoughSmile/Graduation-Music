@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -36,7 +37,9 @@ import com.ge.music.http.model.User;
 import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -73,6 +76,12 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String listStr = SPUtils.getInstance().getString("list","");
+        List<MusicModel> l = Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class));
+        if (l != null && !l.isEmpty()){
+            list = l;
+        }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("musicService");
@@ -261,21 +270,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         if (playingDialogFragment.isVisible()){
             playingDialogFragment.dismiss();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     public List<MusicModel> getList() {
@@ -286,5 +285,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(musicBroadcastReceiver);
+        String listStr = GsonUtils.toJson(list);
+        SPUtils.getInstance().put("list",listStr);
     }
 }

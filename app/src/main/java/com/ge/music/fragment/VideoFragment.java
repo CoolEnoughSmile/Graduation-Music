@@ -15,6 +15,9 @@ import com.ge.music.model.VideoModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
+
 public class VideoFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
@@ -34,7 +37,10 @@ public class VideoFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        videoAdapter.setOnItemClickListener((adapter, view1, position) -> startActivity(new Intent(getContext(),MVActivity.class)));
+        videoAdapter.setOnItemClickListener((adapter, view1, position) ->
+                startActivity(new Intent(getContext(),MVActivity.class))
+//                        Jzvd.startFullscreen(getContext(),Jzvd.class,"http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4","dfsa")
+        );
     }
 
     @Override
