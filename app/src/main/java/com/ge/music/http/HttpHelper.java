@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HttpHelper {
 
     private static GeMusicServerApi geMusicServerApi;
+    private static LrcApi lrcApi;
 
     private HttpHelper() {
     }
@@ -23,6 +24,17 @@ public class HttpHelper {
                 .create(GeMusicServerApi.class);
     }
 
+    private static void buildLrcApi(){
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        lrcApi = new Retrofit.Builder().baseUrl("http://music.163.com/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(LrcApi.class);
+    }
+
     public static GeMusicServerApi getGeMusicServerApi() {
         if (geMusicServerApi == null) {
             synchronized (HttpHelper.class) {
@@ -34,5 +46,14 @@ public class HttpHelper {
         return geMusicServerApi;
     }
 
-
+    public static LrcApi getLrcApi() {
+        if (lrcApi == null) {
+            synchronized (HttpHelper.class) {
+                if (lrcApi == null){
+                    buildLrcApi();
+                }
+            }
+        }
+        return lrcApi;
+    }
 }

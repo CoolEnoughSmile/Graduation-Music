@@ -9,10 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
@@ -29,12 +29,14 @@ public class PlayMusicService extends Service {
 
     private static final String CHANNEL_ID = "PlayMusicService";
     private MediaPlayer mediaPlayer;
-    private NotificationManagerCompat notificationManagerCompat;
+//    private NotificationManagerCompat notificationManagerCompat;
+    private MyBinder myBinder = new MyBinder();
+    private MusicModel curMusicModel;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        notificationManagerCompat = NotificationManagerCompat.from(this);
+//        notificationManagerCompat = NotificationManagerCompat.from(this);
         createNotificationChannel();
         mediaPlayer = MediaPlayer.create(this, R.raw.testmp3);
 //        try {
@@ -46,6 +48,7 @@ public class PlayMusicService extends Service {
             mediaPlayer.start();
             Intent intent = new Intent("musicService");
             intent.putExtra("status","start");
+            intent.putExtra("musicModel",curMusicModel);
             sendBroadcast(intent);
         });
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
@@ -75,18 +78,28 @@ public class PlayMusicService extends Service {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.
                 getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setSmallIcon(R.mipmap.logo)
                 .setContentTitle(musicModel.getMusicName())
                 .setContentText(musicModel.getSinger())
                 .setWhen(System.currentTimeMillis())
+//                .addAction(R.mipmap.ic_last_one_music,"",PendingIntent.getService(this,0,new Intent(getApplicationContext(),PlayMusicService.class),PendingIntent.FLAG_UPDATE_CURRENT))
+//                .addAction(R.mipmap.ic_notify_play,"",PendingIntent.getService(this,0,new Intent(getApplicationContext(),PlayMusicService.class),PendingIntent.FLAG_UPDATE_CURRENT))
+//                .addAction(R.mipmap.ic_next_music,"",PendingIntent.getService(this,0,new Intent(getApplicationContext(),PlayMusicService.class),PendingIntent.FLAG_UPDATE_CURRENT))
                 .setContentIntent(pendingIntent);
         return builder;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return myBinder;
+    }
+
+    public class MyBinder extends Binder {
+        public PlayMusicService getService(){
+            return PlayMusicService.this;
+        }
     }
 
     @Override
@@ -109,6 +122,7 @@ public class PlayMusicService extends Service {
                 try {
                     mediaPlayer.reset();
                     mediaPlayer.setDataSource(musicModel.getUrl());
+                    curMusicModel = musicModel;
                     mediaPlayer.prepareAsync();
                     NotificationCompat.Builder builder = buildNotificationBuilder(musicModel);
                     Glide.with(this)
@@ -137,5 +151,13 @@ public class PlayMusicService extends Service {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public MusicModel getCurMusicModel() {
+        return curMusicModel;
     }
 }

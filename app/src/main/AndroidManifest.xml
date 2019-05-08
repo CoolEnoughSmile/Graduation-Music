@@ -66,6 +66,10 @@
             android:screenOrientation="portrait"
             android:label="重置密码"/>
 
+        <activity android:name=".activity.LrcActivity"
+            android:theme="@style/TranslucentTheme"
+            android:label="歌词展示"/>
+
         <service android:name=".media.PlayMusicService"
             android:enabled="true"
             android:exported="false"/>

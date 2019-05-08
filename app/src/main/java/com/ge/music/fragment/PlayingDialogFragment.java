@@ -14,22 +14,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
+import com.ge.music.http.CallHelper;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.http.model.LrcModel;
 import com.ge.music.model.MusicModel;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import cn.zhaiyifan.lyric.LyricUtils;
-import cn.zhaiyifan.lyric.widget.LyricView;
+import me.wcy.lrcview.LrcView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class PlayingDialogFragment extends BottomSheetDialogFragment {
 
-    private LyricView lyricView;
+    private LrcView lrcView;
     private MainActivity mainActivity;
     private MusicModel musicModel;
     @Override
@@ -51,13 +53,31 @@ public class PlayingDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lyricView = view.findViewById(R.id.lrcView);
+        lrcView = view.findViewById(R.id.lrc_view);
         if (musicModel != null) {
             String lrc = musicModel.getLrc();
             LogUtils.d(lrc);
-            lyricView.setLyric(LyricUtils.parseLyric(new ByteArrayInputStream(lrc.getBytes()),"UTF-8"));
-            lyricView.play();
+            lrcView.loadLrc(musicModel.getLrc());
         }
+        Call<LrcModel> call = HttpHelper.getLrcApi().getLrcModel("26060065");
+        call.enqueue(new CallHelper<LrcModel>(){
+            @Override
+            public void onResponse(Call<LrcModel> call, Response<LrcModel> response) {
+                super.onResponse(call, response);
+                LrcModel lrcModel = response.body();
+                if (lrcModel.getCode() == 200){
+                    lrcView.loadLrc(lrcModel.getLyric());
+                    lrcView.updateTime(5000);
+                    ToastUtils.showShort("获取歌词完成");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LrcModel> call, Throwable t) {
+                super.onFailure(call, t);
+                ToastUtils.showShort("获取歌词失败");
+            }
+        });
     }
 
     @Override

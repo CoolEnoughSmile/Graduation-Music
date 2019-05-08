@@ -37,7 +37,6 @@ import com.ge.music.http.model.User;
 import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +77,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         super.onCreate(savedInstanceState);
 
         String listStr = SPUtils.getInstance().getString("list","");
-        List<MusicModel> l = Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class));
+        List<MusicModel> l = new ArrayList<>(Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class)));
         if (l != null && !l.isEmpty()){
             list = l;
         }
@@ -211,7 +210,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 musicMenuDialogFragment.show(getSupportFragmentManager(),"MusicMenuDialogFragment");
                 break;
             case R.id.music_play_controller:
-                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
+//                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
+                startActivity(new Intent(this,LrcActivity.class));
                 break;
         }
     }
