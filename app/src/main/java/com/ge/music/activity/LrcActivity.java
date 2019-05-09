@@ -49,7 +49,9 @@ public class LrcActivity extends AppCompatActivity {
     private void initView() {
         lrcView = findViewById(R.id.lrc_view);
         seekBar = findViewById(R.id.progress_bar);
-        lrcView.loadLrc(playMusicService.getCurMusicModel().getLrc());
+        if(playMusicService.getCurMusicModel() != null) {
+            lrcView.loadLrc(playMusicService.getCurMusicModel().getLrc());
+        }
         lrcView.updateTime(0);
         lrcView.setOnPlayClickListener(time -> {
             mediaPlayer.seekTo((int) time);

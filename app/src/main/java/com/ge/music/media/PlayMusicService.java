@@ -1,6 +1,5 @@
 package com.ge.music.media;
 
-import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -65,13 +64,15 @@ public class PlayMusicService extends Service {
         });
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
     private void createNotificationChannel() {
-        CharSequence name = "music";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-        manager.createNotificationChannel(mChannel);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "music";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel mChannel = null;
+            mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            manager.createNotificationChannel(mChannel);
+        }
     }
 
     private NotificationCompat.Builder buildNotificationBuilder(MusicModel musicModel){

@@ -77,9 +77,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         super.onCreate(savedInstanceState);
 
         String listStr = SPUtils.getInstance().getString("list","");
-        List<MusicModel> l = new ArrayList<>(Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class)));
-        if (l != null && !l.isEmpty()){
-            list = l;
+        if (!"".equals(listStr)){
+            List<MusicModel> l = new ArrayList<>(Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class)));
+            if (l != null && !l.isEmpty()){
+                list = l;
+            }
         }
 
         IntentFilter intentFilter = new IntentFilter();
@@ -210,8 +212,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 musicMenuDialogFragment.show(getSupportFragmentManager(),"MusicMenuDialogFragment");
                 break;
             case R.id.music_play_controller:
-//                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
-                startActivity(new Intent(this,LrcActivity.class));
+                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
+//                startActivity(new Intent(this,LrcActivity.class));
                 break;
         }
     }
