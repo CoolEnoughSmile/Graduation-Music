@@ -23,7 +23,7 @@ public class VideoAdapter extends BaseQuickAdapter<VideoModel, BaseViewHolder> {
         ImageView posterIv = helper.getView(R.id.poster_iv);
         Glide.with(mContext)
                 .load(videoModel.getPoster())
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)).placeholder(R.mipmap.ic_qq))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)).placeholder(R.mipmap.placeholder))
                 .into(posterIv);
         helper.setText(R.id.video_name_tv,videoModel.getVideoName());
     }

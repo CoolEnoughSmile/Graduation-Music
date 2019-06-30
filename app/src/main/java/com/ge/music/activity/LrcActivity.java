@@ -1,88 +1,141 @@
 package com.ge.music.activity;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.ge.music.CESView.LrcView.LrcView;
 import com.ge.music.R;
-import com.ge.music.media.PlayMusicService;
+import com.ge.music.http.HttpHelper;
+import com.ge.music.http.model.LrcModel;
+import com.ge.music.media.MessageEvent;
+import com.ge.music.media.MusicConstant;
+import com.ge.music.model.MusicModel;
 
-import me.wcy.lrcview.LrcView;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public class LrcActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
+public class LrcActivity extends AppCompatActivity{
 
     private LrcView lrcView;
-    private PlayMusicService playMusicService;
-    private MediaPlayer mediaPlayer;
     private SeekBar seekBar;
-    private Handler handler = new Handler();
+    private CheckBox playPauseBtn;
+    private ImageButton preBtn;
+    private ImageButton nextBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_dialog_playing);
-        bindService(new Intent(this,PlayMusicService.class),serviceConnection, Context.BIND_AUTO_CREATE);
-    }
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            playMusicService = ((PlayMusicService.MyBinder) service).getService();
-            mediaPlayer = playMusicService.getMediaPlayer();
-            initView();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            playMusicService = null;
-        }
-    };
-
-    private void initView() {
         lrcView = findViewById(R.id.lrc_view);
         seekBar = findViewById(R.id.progress_bar);
-        if(playMusicService.getCurMusicModel() != null) {
-            lrcView.loadLrc(playMusicService.getCurMusicModel().getLrc());
-        }
-        lrcView.updateTime(0);
-        lrcView.setOnPlayClickListener(time -> {
-            mediaPlayer.seekTo((int) time);
-            if (!mediaPlayer.isPlaying()) {
-                mediaPlayer.start();
-                handler.post(runnable);
+        playPauseBtn = findViewById(R.id.play_pause_btn);
+        preBtn = findViewById(R.id.pre_btn);
+        nextBtn = findViewById(R.id.next_btn);
+
+        EventBus.getDefault().register(this);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
             }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                lrcView.updateTime(seekBar.getProgress());
+                Map<String,Object> map = new HashMap<>();
+                map.put("progress",seekBar.getProgress());
+                EventBus.getDefault().post(new MessageEvent(MusicConstant.SEEK_PROGRESS,map));
+            }
+        });
+
+        preBtn.setOnClickListener(v -> {
+            EventBus.getDefault().post(new MessageEvent(MusicConstant.PRE, null));
+        });
+        nextBtn.setOnClickListener(v -> {
+            EventBus.getDefault().post(new MessageEvent(MusicConstant.NEXT, null));
+        });
+        playPauseBtn.setOnClickListener(v ->{
+            EventBus.getDefault().post(new MessageEvent(MusicConstant.START_PAUSE, null));
+        });
+
+        lrcView.setOnPlayClickListener(time -> {
+            seekBar.setProgress((int) time);
+            Map<String,Object> map = new HashMap<>();
+            map.put("progress",seekBar.getProgress());
+            EventBus.getDefault().post(new MessageEvent(MusicConstant.SEEK_PROGRESS,map));
             return true;
         });
-        if (mediaPlayer.isPlaying()) {
-            handler.post(runnable);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onMessageEvent(MessageEvent event){
+        switch (event.getEvent()){
+            case MusicConstant.MUSIC_CHANGE:
+                MusicModel musicModel = (MusicModel) event.getData().get("musicModel");
+                int duration = (int) event.getData().get("duration");
+                seekBar.setMax(duration);
+                seekBar.setProgress(0);
+                loadLrc(musicModel.getLrc());
+                playPauseBtn.setChecked(true);
+                break;
+            case MusicConstant.PROGRESS:
+                int progress = (int) event.getData().get("progress");
+                seekBar.setProgress(progress);
+                lrcView.updateTime(progress);
+                break;
+            case MusicConstant.PLAYER_ERROR:
+            case MusicConstant.COMPLETE:
+                lrcView.updateTime(0);
+                seekBar.setProgress(0);
+                playPauseBtn.setChecked(false);
+                break;
         }
     }
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mediaPlayer.isPlaying()) {
-                long time = mediaPlayer.getCurrentPosition();
-                lrcView.updateTime(time);
-                LogUtils.d("time = " + time);
-//                seekBar.setProgress((int) time);
+    private void loadLrc(String id) {
+        Call<LrcModel> call = HttpHelper.getLrcApi().getLrcModel(id);
+        call.enqueue(new Callback<LrcModel>() {
+            @Override
+            public void onResponse(Call<LrcModel> call, Response<LrcModel> response) {
+                LrcModel lrcModel = response.body();
+                if (lrcModel.getCode() == 200){
+                    lrcView.loadLrc(lrcModel.getLyric());
+                }
+                LogUtils.d(lrcModel);
             }
 
-            handler.postDelayed(this, 300);
-        }
-    };
+            @Override
+            public void onFailure(Call<LrcModel> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(serviceConnection);
+//        unregisterReceiver(broadcastReceiver);
+        EventBus.getDefault().unregister(this);
     }
 }

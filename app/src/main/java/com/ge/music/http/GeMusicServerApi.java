@@ -2,6 +2,7 @@ package com.ge.music.http;
 
 import com.ge.music.http.model.User;
 import com.ge.music.model.MusicModel;
+import com.ge.music.model.VideoModel;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface GeMusicServerApi {
     @GET("music/getMusicList")
     Call<GeMusicResponse<List<MusicModel>>> getMusicList(@Query("pageNum") int PageNum,@Query("pageSize") int pageSize);
 
+    @GET("video/getVideoList ")
+    Call<GeMusicResponse<List<VideoModel>>> getVideoList(@Query("pageNum") int PageNum, @Query("pageSize") int pageSize);
 }

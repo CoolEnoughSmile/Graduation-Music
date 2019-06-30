@@ -2,6 +2,7 @@ package com.ge.music.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
 import com.ge.music.adapter.MusicMenuAdapter;
+import com.ge.music.media.MusicConstant;
 import com.ge.music.model.MusicModel;
 
 public class MusicMenuDialogFragment extends BottomSheetDialogFragment {
@@ -39,13 +41,17 @@ public class MusicMenuDialogFragment extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        menuAdapter = new MusicMenuAdapter(mainActivity.getList());
+        menuAdapter = new MusicMenuAdapter(mainActivity.getHistory());
         menuAdapter.setOnItemClickListener((adapter,v,position) -> {
-            mainActivity.play((MusicModel) adapter.getItem(position));
+            MusicModel musicModel= (MusicModel) adapter.getItem(position);
+            Message message = mainActivity.serviceHandler.obtainMessage();
+            message.what = MusicConstant.PLAY;
+            message.obj = musicModel;
+            mainActivity.serviceHandler.sendMessage(message);
             MusicMenuDialogFragment.this.dismiss();
         });
         menuAdapter.setOnItemChildClickListener((adapter,v,position) -> {
-            mainActivity.getList().remove(position);
+            mainActivity.getHistory().remove(position);
             adapter.notifyDataSetChanged();
         });
         recyclerView.setAdapter(menuAdapter);

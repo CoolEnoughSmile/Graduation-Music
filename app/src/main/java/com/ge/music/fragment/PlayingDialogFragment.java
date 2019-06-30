@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.ge.music.CESView.LrcView.LrcView;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
 import com.ge.music.http.CallHelper;
@@ -22,9 +23,6 @@ import com.ge.music.http.HttpHelper;
 import com.ge.music.http.model.LrcModel;
 import com.ge.music.model.MusicModel;
 
-import java.util.List;
-
-import me.wcy.lrcview.LrcView;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -38,10 +36,7 @@ public class PlayingDialogFragment extends BottomSheetDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mainActivity = (MainActivity) context;
-        List<MusicModel> list = mainActivity.getList();
-        if(list != null && !list.isEmpty()){
-            musicModel = list.get(mainActivity.currentMusicIndex);
-        }
+
     }
 
     @Nullable

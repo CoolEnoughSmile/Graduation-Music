@@ -27,6 +27,7 @@
             android:layout_height="48dp"
             style="?attr/selectableItemBackgroundBorderless"
             android:layout_gravity="bottom"
+            android:visibility="gone"
             android:id="@+id/music_play_controller">
 
             <View

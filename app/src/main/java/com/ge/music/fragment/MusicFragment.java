@@ -4,6 +4,7 @@ package com.ge.music.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.ge.music.R;
 import com.ge.music.activity.MainActivity;
 import com.ge.music.adapter.MusicAdapter;
@@ -22,6 +22,7 @@ import com.ge.music.base.BaseFragment;
 import com.ge.music.http.CallHelper;
 import com.ge.music.http.GeMusicResponse;
 import com.ge.music.http.HttpHelper;
+import com.ge.music.media.MusicConstant;
 import com.ge.music.model.MusicModel;
 import com.ge.music.utils.BannerImageLoader;
 import com.youth.banner.Banner;
@@ -77,9 +78,13 @@ public class MusicFragment extends BaseFragment {
         musicAdapter.bindToRecyclerView(recyclerView);
         musicAdapter.setOnItemClickListener((adapter,itemView,position) -> {
             MusicModel music = (MusicModel) adapter.getItem(position);
-//            ToastUtils.showLong(((MusicModel)adapter.getItem(position)).getMusicName());
-            mainActivity.play(music);
-            mainActivity.getList().add(0,music);
+            mainActivity.getHistory().add(0,music);
+            mainActivity.currentMusicIndex = 0;
+            Message message = mainActivity.serviceHandler.obtainMessage();
+            message.what = MusicConstant.PLAY;
+            message.obj = music;
+            mainActivity.serviceHandler.sendMessage(message);
+            mainActivity.musicPlayController.setVisibility(View.VISIBLE);
         });
     }
 

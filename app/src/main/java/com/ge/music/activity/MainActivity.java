@@ -1,10 +1,12 @@
 package com.ge.music.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -18,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -34,15 +35,20 @@ import com.ge.music.fragment.MusicMenuDialogFragment;
 import com.ge.music.fragment.PlayingDialogFragment;
 import com.ge.music.fragment.VideoFragment;
 import com.ge.music.http.model.User;
+import com.ge.music.media.MessageEvent;
+import com.ge.music.media.MusicConstant;
 import com.ge.music.media.PlayMusicService;
 import com.ge.music.model.MusicModel;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
+public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener{
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -56,6 +62,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     private ImageView avatorIv;
     private TextView nickNameTv;
 
+    public View musicPlayController;
     private ImageView posterIv;
     private CheckBox playOrPauseBtn;
     private TextView musicNameTv;
@@ -67,26 +74,37 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     private MusicFragment musicFragment;
 
+    private List<MusicModel> history = new ArrayList<>();
+    public int currentMusicIndex = 0;
     private User user = GraduationEraMusic.getUser();
 
-    private List<MusicModel> list = new ArrayList<>();
-    public int currentMusicIndex = 0;
+    public Handler serviceHandler;
+    private ServiceConnection connection = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayMusicService.MyBinder myBinder = (PlayMusicService.MyBinder) service;
+            serviceHandler = myBinder.getMusicServiceHandler();
+
+
+//            IntentFilter intentFilter = new IntentFilter();
+//            intentFilter.addAction(MusicConstant.ACTION);
+//            registerReceiver(broadcastReceiver,intentFilter);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceHandler = null;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        String listStr = SPUtils.getInstance().getString("list","");
-        if (!"".equals(listStr)){
-            List<MusicModel> l = new ArrayList<>(Arrays.asList(GsonUtils.fromJson(listStr, MusicModel[].class)));
-            if (l != null && !l.isEmpty()){
-                list = l;
-            }
-        }
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("musicService");
-        registerReceiver(musicBroadcastReceiver,intentFilter);
+        EventBus.getDefault().register(this);
+        Intent intent = new Intent(this, PlayMusicService.class);
+        startService(intent);
+        bindService(intent,connection,BIND_AUTO_CREATE);
     }
 
     @Override
@@ -111,7 +129,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         mainTabBarLeft.setOnClickListener(this);
         mainTabBarRight.setOnClickListener(this);
 
-        findViewById(R.id.music_play_controller).setOnClickListener(this);
+        musicPlayController = findViewById(R.id.music_play_controller);
+        musicPlayController.setOnClickListener(this);
         findViewById(R.id.music_menu_btn).setOnClickListener(this);
 
         findViewById(R.id.play_or_pause_btn).setOnClickListener(this);
@@ -143,8 +162,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 .into(avatorIv);
 
         Glide.with(this)
-                .load(R.raw.testjpg)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.placeholder_music_poster))
+                .load(R.mipmap.placeholder_music_poster)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(posterIv);
     }
 
@@ -206,23 +225,26 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             case R.id.main_tab_bar_right:
                 break;
             case R.id.play_or_pause_btn:
-                playOrPause();
+                if (serviceHandler != null){
+                    serviceHandler.sendEmptyMessage(MusicConstant.START_PAUSE);
+                }
                 break;
             case R.id.music_menu_btn:
                 musicMenuDialogFragment.show(getSupportFragmentManager(),"MusicMenuDialogFragment");
                 break;
             case R.id.music_play_controller:
-                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
-//                startActivity(new Intent(this,LrcActivity.class));
+//                playingDialogFragment.show(getSupportFragmentManager(),"PlayingDialogFragment");
+                startActivity(new Intent(this,LrcActivity.class));
                 break;
         }
     }
 
-    private void playOrPause() {
-        Intent intent = new Intent(this,PlayMusicService.class);
-        intent.putExtra("action","playOrPause");
-//        intent.putExtra("",);
-        startService(intent);
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        unregisterReceiver(broadcastReceiver);
+        EventBus.getDefault().unregister(this);
     }
 
     //监听手机的物理按键点击事件
@@ -234,60 +256,69 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         return false;
     }
 
-    public void play(MusicModel musicModel){
-        Intent intent = new Intent(this,PlayMusicService.class);
-        intent.putExtra("action","play");
-        intent.putExtra("musicModel",musicModel);
-        startService(intent);
-        Glide.with(this)
-                .load(musicModel.getPoster())
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.placeholder_music_poster))
-                .into(posterIv);
-        musicNameTv.setText(musicModel.getMusicName());
-        singerTv.setText(musicModel.getSinger());
-    }
-
-    private BroadcastReceiver musicBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String status = intent.getStringExtra("status");
-//            MusicModel musicModel = intent.getParcelableExtra("musicModel");
-            switch (status){
-                case "error":
-                    ToastUtils.showShort("链接失效");
-                    playOrPauseBtn.setChecked(false);
-                    break;
-                case "start":
-                    playOrPauseBtn.setChecked(true);
-                    currentMusicIndex = 0;
-                    break;
-                case "completion":
-                    playOrPauseBtn.setChecked(false);
-                    if (currentMusicIndex < list.size()-1) {
-                        play(list.get(++currentMusicIndex));
-                    }
-                    break;
-            }
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (playingDialogFragment.isVisible()){
-            playingDialogFragment.dismiss();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getEvent()){
+            case MusicConstant.MUSIC_CHANGE:
+                MusicModel musicModel = (MusicModel) event.getData().get("musicModel");
+                playOrPauseBtn.setChecked(true);
+                Glide.with(this)
+                        .load(musicModel.getPoster())
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()).placeholder(R.mipmap.placeholder_music_poster))
+                        .into(posterIv);
+                musicNameTv.setText(musicModel.getMusicName());
+                singerTv.setText(musicModel.getSinger());
+                break;
+            case MusicConstant.PLAYER_ERROR:
+                ToastUtils.showShort("链接失效");
+                playOrPauseBtn.setChecked(false);
+                break;
+            case MusicConstant.COMPLETE:
+                playOrPauseBtn.setChecked(false);
+                playNext();
+                break;
+            case MusicConstant.PRE:
+                playOrPauseBtn.setChecked(false);
+                playLast();
+                break;
+            case MusicConstant.NEXT:
+                playOrPauseBtn.setChecked(false);
+                playNext();
+                break;
+            case MusicConstant.START_PAUSE:
+                if (serviceHandler != null){
+                    serviceHandler.sendEmptyMessage(MusicConstant.START_PAUSE);
+                }
+                playOrPauseBtn.setChecked(!playOrPauseBtn.isChecked());
+                break;
         }
     }
 
-    public List<MusicModel> getList() {
-        return list;
+    private void playNext() {
+        if (currentMusicIndex < history.size()-1) {
+            MusicModel music= history.get(++currentMusicIndex);
+            Message message = serviceHandler.obtainMessage();
+            message.what = MusicConstant.PLAY;
+            message.obj = music;
+            serviceHandler.sendMessage(message);
+        }else{
+            ToastUtils.showShort("没有更多");
+        }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(musicBroadcastReceiver);
-        String listStr = GsonUtils.toJson(list);
-        SPUtils.getInstance().put("list",listStr);
+    private void playLast() {
+        if (currentMusicIndex >0) {
+            MusicModel music= history.get(--currentMusicIndex);
+            Message message = serviceHandler.obtainMessage();
+            message.what = MusicConstant.PLAY;
+            message.obj = music;
+            serviceHandler.sendMessage(message);
+        }else{
+            ToastUtils.showShort("没有更多");
+        }
+    }
+
+    public List<MusicModel> getHistory() {
+        return history;
     }
 }

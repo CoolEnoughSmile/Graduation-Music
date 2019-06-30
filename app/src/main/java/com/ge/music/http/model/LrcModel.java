@@ -38,4 +38,14 @@ public class LrcModel {
     public void setCode(int code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "LrcModel{" +
+                "songStatus=" + songStatus +
+                ", lyricVersion=" + lyricVersion +
+                ", lyric='" + lyric + '\'' +
+                ", code=" + code +
+                '}';
+    }
 }
