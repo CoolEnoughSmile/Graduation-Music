@@ -7,8 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpHelper {
 
-    private static GeMusicServerApi geMusicServerApi;
-    private static LrcApi lrcApi;
+    private static volatile GeMusicServerApi geMusicServerApi;
+    private static volatile LrcApi lrcApi;
 
     private HttpHelper() {
     }
